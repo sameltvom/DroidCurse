@@ -1,6 +1,7 @@
 package org.samuel.droidcurse;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,7 +28,14 @@ public class DroidCurse extends Activity {
 			Log.i("DroidCurse", "Clicked connect button");
 			networkConnection.setHost(networkConnection.DEFAULT_HOST);
 			networkConnection.setPort(networkConnection.DEFAULT_PORT);
-			networkConnection.connect();
+			boolean connectOk = networkConnection.connect();
+			
+			if (connectOk) {
+				Intent i = new Intent(DroidCurse.this, MusicBrowser.class);
+				/* Give the speed as an argument */
+				//i.putExtra("speed", Morse.UNIT_TIME);
+		        startActivity(i);
+			}
 		}
 	};
 	

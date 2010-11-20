@@ -33,21 +33,21 @@ public class NetworkConnection {
 		this.port = port;
 	}
 
-	public void connect() {
+	public boolean connect() {
 		try {
 			socket = new Socket(host, port);
 			networkReaderThread = new NetworkReaderThread(socket);
 			networkReaderThread.start();
 			
-			Toast.makeText(activity.getApplicationContext(), "Connected to: "+host, Toast.LENGTH_SHORT).show();
+			return true;
 		} catch (UnknownHostException e) {
 			Log.e("DroidCurse", "Unknown host: "+host);
 			Toast.makeText(activity.getApplicationContext(), "Unknown host", Toast.LENGTH_SHORT).show();
-			e.printStackTrace();
+			return false;
 		} catch (IOException e) {
 			Log.e("DroidCurse", "Couldn't create socket to: "+host+":"+port);
 			Toast.makeText(activity.getApplicationContext(), "Couldn't create connection", Toast.LENGTH_SHORT).show();
-			e.printStackTrace();
+			return false;
 		}
 	}
 
