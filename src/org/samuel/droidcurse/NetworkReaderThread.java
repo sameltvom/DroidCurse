@@ -22,9 +22,9 @@ public class NetworkReaderThread extends Thread {
 				Log.i("DroidCurse", "Got line: "+line);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e("DroidCurse", "Couldn't readline, probably disconnected");
 		}
+		Log.i("DroidCurse", "Exiting reader thread");
 		
 	}
 }

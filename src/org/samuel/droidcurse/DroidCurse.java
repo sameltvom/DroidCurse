@@ -18,15 +18,24 @@ public class DroidCurse extends Activity {
         networkConnection = new NetworkConnection(this);
         
         ((Button)findViewById(R.id.connect_button)).setOnClickListener(connectButtonListener);
+        ((Button)findViewById(R.id.disconnect_button)).setOnClickListener(disconnectButtonListener);
     }
     
     View.OnClickListener connectButtonListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Log.i("DroidCurse", "Clicked button");
+			Log.i("DroidCurse", "Clicked connect button");
 			networkConnection.setHost(networkConnection.DEFAULT_HOST);
 			networkConnection.setPort(networkConnection.DEFAULT_PORT);
 			networkConnection.connect();
+		}
+	};
+	
+	View.OnClickListener disconnectButtonListener = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			Log.i("DroidCurse", "Clicked disconnect button");
+			networkConnection.disconnect();
 		}
 	};
 }

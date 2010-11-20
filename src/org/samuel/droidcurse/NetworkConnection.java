@@ -50,6 +50,15 @@ public class NetworkConnection {
 			e.printStackTrace();
 		}
 	}
+
+	public void disconnect() {
+		try {
+			socket.close();
+		} catch (IOException e) {
+			Log.e("DroidCurse", "Couldn't close socket");
+			e.printStackTrace();
+		}
+	}
 	
 	
 }
