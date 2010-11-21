@@ -6,9 +6,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import android.app.Activity;
 import android.util.Log;
-import android.widget.Toast;
 
 public class NetworkConnection {
 	private static NetworkConnection singletonInstance;
@@ -23,11 +21,13 @@ public class NetworkConnection {
 	private BufferedWriter writer;
 	
 	private ResponseMonitor artistMonitor;
+	private ResponseMonitor listMonitor;
 	
 	public NetworkConnection() {
 		host = DEFAULT_HOST;
 		port = DEFAULT_PORT;
 		artistMonitor = new ResponseMonitor();
+		listMonitor = new ResponseMonitor();
 	}
 
 	public void setHost(String host) {
@@ -42,7 +42,7 @@ public class NetworkConnection {
 		try {
 			socket = new Socket(host, port);
 			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-			networkReaderThread = new NetworkReaderThread(socket, artistMonitor);
+			networkReaderThread = new NetworkReaderThread(socket, artistMonitor, listMonitor);
 			networkReaderThread.start();
 			
 			return true;
@@ -68,7 +68,16 @@ public class NetworkConnection {
 	}
 	
 	
-	public String[] getListOfSongs() {
+	public static NetworkConnection getInstance() {
+		if (singletonInstance == null) {
+			singletonInstance = new NetworkConnection();
+		}
+		return singletonInstance;
+	}
+	
+	
+	// TODO: Do this in a seperate thread and when done update the gui
+	public String[] getListOfArtists() {
 		//return new String[]{"Bob Dylan - I want you", "Johnny cash - Get the rhythm"};
 		try {
 			Log.d("DroidCurse", "Waiting for artist response");
@@ -78,7 +87,8 @@ public class NetworkConnection {
 			Log.d("DroidCurse", "Got artist response:");
 			for (String s : res) {
 				Log.d("DroidCurse", s);
-			}
+			}Log.d("DroidCurse", "Setting artist: "+0);
+		
 			return res;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -88,11 +98,53 @@ public class NetworkConnection {
 		
 	}
 	
-	public static NetworkConnection getInstance() {
-		if (singletonInstance == null) {
-			singletonInstance = new NetworkConnection();
+	// TODO: Do this in a seperate thread and when done update the gui
+	public String[] getListOfSongs() {
+		//return new String[]{"Bob Dylan - I want you", "Johnny cash - Get the rhythm"};
+		try {
+			Log.d("DroidCurse", "Waiting for list response");
+			writer.write("list\r\n");
+			writer.flush();
+			String[] res = listMonitor.getMessages();
+			Log.d("DroidCurse", "Got list response:");
+			for (String s : res) {
+				Log.d("DroidCurse", s);
+			}
+			
+			return res;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
 		}
-		return singletonInstance;
+		
+	}
+	
+	
+	// TODO: Do this in a seperate thread
+	public void setArtist(int position) {
+		Log.d("DroidCurse", "Setting artist: "+position);
+		try {
+			writer.write("set artist "+position+"\r\n");
+			writer.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.d("DroidCurse", "Setting artist done");
+	}
+
+	// TODO: Do this in a seperate thread
+	public void playSong(int position) {
+		Log.d("DroidCurse", "Playing song: "+position);
+		try {
+			writer.write("play "+position+"\r\n");
+			writer.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.d("DroidCurse", "Playing song done");
 	}
 
 	

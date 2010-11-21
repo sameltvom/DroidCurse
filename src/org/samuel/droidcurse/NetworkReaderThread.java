@@ -10,10 +10,12 @@ import android.util.Log;
 public class NetworkReaderThread extends Thread {
 	private Socket socket;
 	private ResponseMonitor artistMonitor;
+	private ResponseMonitor listMonitor;
 	
-	public NetworkReaderThread(Socket socket, ResponseMonitor artistMonitor) {
+	public NetworkReaderThread(Socket socket, ResponseMonitor artistMonitor, ResponseMonitor listMonitor) {
 		this.socket = socket;
 		this.artistMonitor = artistMonitor;
+		this.listMonitor = listMonitor;
 	}
 	
 	public void run() {
@@ -29,6 +31,12 @@ public class NetworkReaderThread extends Thread {
 					artistMonitor.addMessage(artistItem);
 				} else if (line.startsWith("ARTIST ARTIST_END")) {
 					artistMonitor.setReady();
+				} else if (line.startsWith("LIST LIST_ITM")) {
+					String words[] = line.split("LIST LIST_ITM ");
+					String songItem = words[1];
+					listMonitor.addMessage(songItem);
+				} else if (line.startsWith("LIST LIST_END")) {
+					listMonitor.setReady();
 				}
 			}
 		} catch (IOException e) {
