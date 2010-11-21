@@ -31,10 +31,8 @@ public class DroidCurse extends Activity {
 			boolean connectOk = networkConnection.connect();
 			
 			if (connectOk) {
-				Intent i = new Intent(DroidCurse.this, MusicBrowser.class);
-				/* Give the speed as an argument */
-				//i.putExtra("speed", Morse.UNIT_TIME);
-		        startActivity(i);
+				Intent i = new Intent(DroidCurse.this, TabsTutorial.class);
+				startActivity(i);
 			}
 		}
 	};

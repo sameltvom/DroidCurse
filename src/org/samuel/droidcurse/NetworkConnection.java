@@ -57,6 +57,9 @@ public class NetworkConnection {
 		} catch (IOException e) {
 			Log.e("DroidCurse", "Couldn't close socket");
 			e.printStackTrace();
+		} catch (NullPointerException e) {
+			Log.e("DroidCurse", "Socket already closed");
+			e.printStackTrace();
 		}
 	}
 	
