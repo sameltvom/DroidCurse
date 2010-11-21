@@ -1,6 +1,8 @@
 package org.samuel.droidcurse;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -9,20 +11,23 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class NetworkConnection {
+	private static NetworkConnection singletonInstance;
+	
 	public static final String DEFAULT_HOST = "192.168.0.123";
 	public static final int DEFAULT_PORT = 5000;
 	
 	private String host;
 	private int port;
 	private Socket socket;
-	private Activity activity;
-	private NetworkReaderThread networkReaderThread;
+	private NetworkReaderThread networkReaderThread;	
+	private BufferedWriter writer;
 	
+	private ResponseMonitor artistMonitor;
 	
-	public NetworkConnection(Activity activity) {
-		this.activity = activity;
+	public NetworkConnection() {
 		host = DEFAULT_HOST;
 		port = DEFAULT_PORT;
+		artistMonitor = new ResponseMonitor();
 	}
 
 	public void setHost(String host) {
@@ -36,17 +41,16 @@ public class NetworkConnection {
 	public boolean connect() {
 		try {
 			socket = new Socket(host, port);
-			networkReaderThread = new NetworkReaderThread(socket);
+			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+			networkReaderThread = new NetworkReaderThread(socket, artistMonitor);
 			networkReaderThread.start();
 			
 			return true;
 		} catch (UnknownHostException e) {
 			Log.e("DroidCurse", "Unknown host: "+host);
-			Toast.makeText(activity.getApplicationContext(), "Unknown host", Toast.LENGTH_SHORT).show();
 			return false;
 		} catch (IOException e) {
 			Log.e("DroidCurse", "Couldn't create socket to: "+host+":"+port);
-			Toast.makeText(activity.getApplicationContext(), "Couldn't create connection", Toast.LENGTH_SHORT).show();
 			return false;
 		}
 	}
@@ -63,5 +67,33 @@ public class NetworkConnection {
 		}
 	}
 	
+	
+	public String[] getListOfSongs() {
+		//return new String[]{"Bob Dylan - I want you", "Johnny cash - Get the rhythm"};
+		try {
+			Log.d("DroidCurse", "Waiting for artist response");
+			writer.write("artist\r\n");
+			writer.flush();
+			String[] res = artistMonitor.getMessages();
+			Log.d("DroidCurse", "Got artist response:");
+			for (String s : res) {
+				Log.d("DroidCurse", s);
+			}
+			return res;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
+	public static NetworkConnection getInstance() {
+		if (singletonInstance == null) {
+			singletonInstance = new NetworkConnection();
+		}
+		return singletonInstance;
+	}
+
 	
 }

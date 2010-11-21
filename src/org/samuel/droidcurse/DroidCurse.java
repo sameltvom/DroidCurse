@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class DroidCurse extends Activity {
 	private NetworkConnection networkConnection;
@@ -16,7 +17,7 @@ public class DroidCurse extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        networkConnection = new NetworkConnection(this);
+        networkConnection = NetworkConnection.getInstance();
         
         ((Button)findViewById(R.id.connect_button)).setOnClickListener(connectButtonListener);
         ((Button)findViewById(R.id.disconnect_button)).setOnClickListener(disconnectButtonListener);
@@ -33,6 +34,8 @@ public class DroidCurse extends Activity {
 			if (connectOk) {
 				Intent i = new Intent(DroidCurse.this, TabsTutorial.class);
 				startActivity(i);
+			} else {
+				Toast.makeText(getApplicationContext(), "Couldn't connect", Toast.LENGTH_SHORT).show();
 			}
 		}
 	};

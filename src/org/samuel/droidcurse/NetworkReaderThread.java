@@ -9,8 +9,11 @@ import android.util.Log;
 
 public class NetworkReaderThread extends Thread {
 	private Socket socket;
-	public NetworkReaderThread(Socket socket) {
+	private ResponseMonitor artistMonitor;
+	
+	public NetworkReaderThread(Socket socket, ResponseMonitor artistMonitor) {
 		this.socket = socket;
+		this.artistMonitor = artistMonitor;
 	}
 	
 	public void run() {
@@ -20,6 +23,13 @@ public class NetworkReaderThread extends Thread {
 			while (true) {
 				String line = reader.readLine();
 				Log.i("DroidCurse", "Got line: "+line);
+				if (line.startsWith("ARTIST ARTIST_ITM ")) {
+					String words[] = line.split("ARTIST ARTIST_ITM ");
+					String artistItem = words[1];
+					artistMonitor.addMessage(artistItem);
+				} else if (line.startsWith("ARTIST ARTIST_END")) {
+					artistMonitor.setReady();
+				}
 			}
 		} catch (IOException e) {
 			Log.e("DroidCurse", "Couldn't readline, probably disconnected");
