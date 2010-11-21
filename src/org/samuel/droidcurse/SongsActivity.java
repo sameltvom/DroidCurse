@@ -1,15 +1,25 @@
 package org.samuel.droidcurse;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.widget.TextView;
 
-public class SongsActivity extends Activity {
-    public void onCreate(Bundle savedInstanceState) {
+import java.util.ArrayList;
+
+import android.app.ListActivity;
+import android.os.Bundle;
+import android.widget.ArrayAdapter;
+
+public class SongsActivity extends ListActivity {
+	String[] listItems = {"exploring", "android", 
+            "list", "activities"};
+
+	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TextView textview = new TextView(this);
-        textview.setText("This is the Songs tab");
-        setContentView(textview);
+        setContentView(R.layout.songs);
+        fillData();
     }
+    
+    private void fillData() {
+    	setListAdapter(new ArrayAdapter(this, R.layout.list_row, listItems));
+    }
+
 }
