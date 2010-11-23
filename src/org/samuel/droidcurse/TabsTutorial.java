@@ -17,7 +17,8 @@ import android.widget.TabHost;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class TabsTutorial extends TabActivity {
-	private NetworkConnection networkConnection;
+	private Model model;
+	//private NetworkConnection networkConnection;
 	private ListView listViewArtists;
 	private ListView listViewSongs;
 	
@@ -27,7 +28,8 @@ public class TabsTutorial extends TabActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs_main);
 
-        networkConnection = NetworkConnection.getInstance();
+        model = Model.getInstance();
+        //networkConnection = NetworkConnection.getInstance();
         
         TabHost mTabHost;
         mTabHost = getTabHost();
@@ -55,11 +57,12 @@ public class TabsTutorial extends TabActivity {
 		listViewSongs.setOnItemClickListener(songsItemClickListener);
         songsLayout.addView(listViewSongs);
       
-        // first fill tab so it's not empty
-        fillArtistTab();
         
         // switch to artists tab
         mTabHost.setCurrentTab(0);
+    
+        // first fill tab so it's not empty
+        fillArtistTab();   
     }
     
     OnItemClickListener artistsItemClickListener = new OnItemClickListener() {
@@ -98,13 +101,13 @@ public class TabsTutorial extends TabActivity {
 	
 	private void fillArtistTab() {
 		String []listItems;				
-        listItems = networkConnection.getListOfSongs();
+        listItems = model.getListOfSongs();
         listViewSongs.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
 	}
 	
 	private void fillSongsTab() {
 		String []listItems;				
-        listItems = networkConnection.getListOfArtists();
+        listItems = model.getListOfArtists();
         listViewArtists.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
 	}
     
