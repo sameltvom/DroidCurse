@@ -20,7 +20,6 @@ public class TabsTutorial extends TabActivity {
 	private NetworkConnection networkConnection;
 	private ListView listViewArtists;
 	private ListView listViewSongs;
-	private TabActivity thisOne;
 	
 	/** Called when the activity is first created. */
     @Override
@@ -43,7 +42,6 @@ public class TabsTutorial extends TabActivity {
         
         mTabHost.setOnTabChangedListener(tabChangedListener);
         
-        mTabHost.setCurrentTab(0);
         
         
         
@@ -56,9 +54,12 @@ public class TabsTutorial extends TabActivity {
 		listViewSongs =  new ListView(this);
 		listViewSongs.setOnItemClickListener(songsItemClickListener);
         songsLayout.addView(listViewSongs);
+      
+        // first fill tab so it's not empty
+        fillArtistTab();
         
-        
-        thisOne = this;
+        // switch to artists tab
+        mTabHost.setCurrentTab(0);
     }
     
     OnItemClickListener artistsItemClickListener = new OnItemClickListener() {
@@ -88,15 +89,23 @@ public class TabsTutorial extends TabActivity {
 			Log.i("TabsTutorial", "Changing tab: "+tabId);
 		
 			if (tabId.equals("tab_songs")) {
-				String []listItems;				
-		        listItems = networkConnection.getListOfArtists();
-		        listViewArtists.setAdapter(new ArrayAdapter<String>(thisOne, android.R.layout.simple_list_item_1, listItems));
+				fillSongsTab();
 			} else if (tabId.equals("tab_artists")) {
-				String []listItems;				
-		        listItems = networkConnection.getListOfSongs();
-		        listViewSongs.setAdapter(new ArrayAdapter<String>(thisOne, android.R.layout.simple_list_item_1, listItems));	
+				fillArtistTab();
 			}
 		}
 	};
+	
+	private void fillArtistTab() {
+		String []listItems;				
+        listItems = networkConnection.getListOfSongs();
+        listViewSongs.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
+	}
+	
+	private void fillSongsTab() {
+		String []listItems;				
+        listItems = networkConnection.getListOfArtists();
+        listViewArtists.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
+	}
     
 }
