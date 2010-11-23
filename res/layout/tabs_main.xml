@@ -15,21 +15,18 @@
             android:id="@android:id/tabcontent"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
-            <TextView 
-                android:id="@+id/textview1"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" 
-                android:text="this is a tab" />
-            <TextView 
-                android:id="@+id/textview2"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" 
-                android:text="this is another tab" />
-            <LinearLayout android:id="@+id/mylayout"
+            <LinearLayout android:id="@+id/artists_layout"
     	    	android:orientation="vertical"
         		android:layout_width="fill_parent"
-        		android:layout_height="fill_parent">
-    		</LinearLayout>
+        		android:layout_height="fill_parent" />
+            <LinearLayout android:id="@+id/albums_layout"
+    	    	android:orientation="vertical"
+        		android:layout_width="fill_parent"
+        		android:layout_height="fill_parent" />
+            <LinearLayout android:id="@+id/songs_layout"
+    	    	android:orientation="vertical"
+        		android:layout_width="fill_parent"
+        		android:layout_height="fill_parent" />
     	</FrameLayout>
     </LinearLayout>
 </TabHost>

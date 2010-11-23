@@ -18,7 +18,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class TabsTutorial extends TabActivity {
 	private NetworkConnection networkConnection;
-	private ListView listViewSongs;
+	private ListView listViewArtists;
     private ArrayList<String> songsArrayList;
 	private TabActivity thisOne;
 	
@@ -37,9 +37,9 @@ public class TabsTutorial extends TabActivity {
         //        res.getDrawable(R.drawable.ic_tab_albums))
         //    .setContent(intent);
         
-        mTabHost.addTab(mTabHost.newTabSpec("tab_artists").setIndicator("TAB 1").setContent(R.id.textview1));
-        mTabHost.addTab(mTabHost.newTabSpec("tab_albums").setIndicator("TAB 2").setContent(R.id.textview2));
-        mTabHost.addTab(mTabHost.newTabSpec("tab_songs").setIndicator("TAB 3").setContent(R.id.mylayout));
+        mTabHost.addTab(mTabHost.newTabSpec("tab_artists").setIndicator("Artists").setContent(R.id.artists_layout));
+        mTabHost.addTab(mTabHost.newTabSpec("tab_albums").setIndicator("Albums").setContent(R.id.albums_layout));
+        mTabHost.addTab(mTabHost.newTabSpec("tab_songs").setIndicator("Songs").setContent(R.id.songs_layout));
         
         mTabHost.setOnTabChangedListener(tabChangedListener);
         
@@ -53,27 +53,27 @@ public class TabsTutorial extends TabActivity {
         songsArrayList.add("Annars?");
         
         
-        LinearLayout myLayout = (LinearLayout)findViewById(R.id.mylayout); 
+        LinearLayout artistsLayout = (LinearLayout)findViewById(R.id.artists_layout); 
         	
-		listViewSongs =  new ListView(this);
-		listViewSongs.setOnItemClickListener(itemClickListener);
+		listViewArtists =  new ListView(this);
+		listViewArtists.setOnItemClickListener(artistsItemClickListener);
 		
 		/*listItems = new String[songsArrayList.size()];
         songsArrayList.toArray(listItems);
         listViewSongs.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
         */
 		
-        myLayout.addView(listViewSongs);
+        artistsLayout.addView(listViewArtists);
         
         thisOne = this;
     }
     
-    OnItemClickListener itemClickListener = new OnItemClickListener() {
+    OnItemClickListener artistsItemClickListener = new OnItemClickListener() {
 
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
-			Log.i("TabsTutorial", "Clicked, arg2: "+arg2+" arg3: "+arg3);
+			Log.i("TabsTutorial", "Artists item clicked, arg2: "+arg2+" arg3: "+arg3);
 		}
 	};
 
@@ -87,7 +87,7 @@ public class TabsTutorial extends TabActivity {
 			if (tabId.equals("tab_songs")) {
 				String []listItems;				
 		        listItems = networkConnection.getListOfArtists();
-		        listViewSongs.setAdapter(new ArrayAdapter<String>(thisOne, android.R.layout.simple_list_item_1, listItems));
+		        listViewArtists.setAdapter(new ArrayAdapter<String>(thisOne, android.R.layout.simple_list_item_1, listItems));
 			}
 		}
 	};
