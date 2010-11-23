@@ -49,12 +49,24 @@ public class NetworkConnection {
 			networkReaderThread.start();
 	
 			/* Get list of artists and add them to the model */
-			String[] artistList = getListOfArtists();
-			model.setArtistList(artistList);
-		
+			//String[] artistList = getListOfArtists();
+			//model.setArtistList(artistList);
+			Log.d("DroidCurse", "Network: Sending getListofArtists");
+			sendGetListOfArtists();
+			Log.d("DroidCurse", "Network: Sending getListofArtists - finished");
+			Log.d("DroidCurse", "Network: Waiting for response from artistMonitor...");
+			artistMonitor.waitForResponse();
+			Log.d("DroidCurse", "Network: Waiting for response from artistMonitor - finished");
+			
 			/* Get list of song and add them to the model */
-			String[] songList = getListOfSongs();
-			model.setSongList(songList);
+			//String[] songList = getListOfSongs();
+			//model.setSongList(songList);
+			Log.d("DroidCurse", "Network: Sending getListofSongs");
+			sendGetListOfSongs();
+			Log.d("DroidCurse", "Network: Sending getListofSongs - finished");
+			Log.d("DroidCurse", "Network: Waiting for response from listMonitor...");
+			listMonitor.waitForResponse();
+			Log.d("DroidCurse", "Network: Waiting for response from listMonitor - finished");
 			
 			return true;
 		} catch (UnknownHostException e) {
@@ -113,39 +125,39 @@ public class NetworkConnection {
 		Log.d("DroidCurse", "Playing song done");
 	}
 
-	String[] getListOfArtists() {
+	void sendGetListOfArtists() {
 		try {
 			Log.d("DroidCurse", "Waiting for artist response");
 			writer.write("artist\r\n");
 			writer.flush();
-			String[] artistList = artistMonitor.getMessages();
+			/*String[] artistList = artistMonitor.getMessages();
 			Log.d("DroidCurse", "Got artist response:");
 			for (String s : artistList) {
 				Log.d("DroidCurse", s);
 			}
-			return artistList;
+			return artistList;*/
 		} catch (IOException e) {
 			Log.e("DroidCurse", "Couldn't get list of artists");
 			e.printStackTrace();
-			return null;
+			//return null;
 		}
 	}
 	
-	String[] getListOfSongs() {
+	void sendGetListOfSongs() {
 		try {
 			Log.d("DroidCurse", "Waiting for list response");
 			writer.write("list\r\n");
 			writer.flush();
-			String[] songList = listMonitor.getMessages();
+			/*String[] songList = listMonitor.getMessages();
 			Log.d("DroidCurse", "Got list response:");
 			for (String s : songList) {
 				Log.d("DroidCurse", s);
 			}
-			return songList;
+			return songList;*/
 		} catch (IOException e) {
 			Log.e("DroidCurse", "Couldn't get list of songs");
 			e.printStackTrace();
-			return null;
+			//return null;
 		}
 	}
 }
