@@ -23,11 +23,14 @@ public class NetworkConnection {
 	private ResponseMonitor artistMonitor;
 	private ResponseMonitor listMonitor;
 	
+	private Model model;
+	
 	public NetworkConnection() {
 		host = DEFAULT_HOST;
 		port = DEFAULT_PORT;
 		artistMonitor = new ResponseMonitor();
 		listMonitor = new ResponseMonitor();
+		model = Model.getInstance();
 	}
 
 	public void setHost(String host) {
@@ -44,6 +47,27 @@ public class NetworkConnection {
 			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			networkReaderThread = new NetworkReaderThread(socket, artistMonitor, listMonitor);
 			networkReaderThread.start();
+			
+			Log.d("DroidCurse", "Waiting for artist response");
+			writer.write("artist\r\n");
+			writer.flush();
+			String[] artistList = artistMonitor.getMessages();
+			Log.d("DroidCurse", "Got artist response:");
+			for (String s : artistList) {
+				Log.d("DroidCurse", s);
+			}
+			Log.d("DroidCurse", "Setting artist: "+0);
+			model.setArtistList(artistList);
+		
+			Log.d("DroidCurse", "Waiting for list response");
+			writer.write("list\r\n");
+			writer.flush();
+			String[] songList = listMonitor.getMessages();
+			Log.d("DroidCurse", "Got list response:");
+			for (String s : songList) {
+				Log.d("DroidCurse", s);
+			}
+			model.setSongList(songList);
 			
 			return true;
 		} catch (UnknownHostException e) {
@@ -87,7 +111,8 @@ public class NetworkConnection {
 			Log.d("DroidCurse", "Got artist response:");
 			for (String s : res) {
 				Log.d("DroidCurse", s);
-			}Log.d("DroidCurse", "Setting artist: "+0);
+			}
+			Log.d("DroidCurse", "Setting artist: "+0);
 		
 			return res;
 		} catch (IOException e) {
