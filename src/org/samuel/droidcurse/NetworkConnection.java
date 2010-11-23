@@ -49,26 +49,11 @@ public class NetworkConnection {
 			networkReaderThread.start();
 	
 			/* Get list of artists and add them to the model */
-			Log.d("DroidCurse", "Waiting for artist response");
-			writer.write("artist\r\n");
-			writer.flush();
-			String[] artistList = artistMonitor.getMessages();
-			Log.d("DroidCurse", "Got artist response:");
-			for (String s : artistList) {
-				Log.d("DroidCurse", s);
-			}
-			Log.d("DroidCurse", "Setting artist: "+0);
+			String[] artistList = getListOfArtists();
 			model.setArtistList(artistList);
 		
 			/* Get list of song and add them to the model */
-			Log.d("DroidCurse", "Waiting for list response");
-			writer.write("list\r\n");
-			writer.flush();
-			String[] songList = listMonitor.getMessages();
-			Log.d("DroidCurse", "Got list response:");
-			for (String s : songList) {
-				Log.d("DroidCurse", s);
-			}
+			String[] songList = getListOfSongs();
 			model.setSongList(songList);
 			
 			return true;
@@ -128,5 +113,39 @@ public class NetworkConnection {
 		Log.d("DroidCurse", "Playing song done");
 	}
 
+	String[] getListOfArtists() {
+		try {
+			Log.d("DroidCurse", "Waiting for artist response");
+			writer.write("artist\r\n");
+			writer.flush();
+			String[] artistList = artistMonitor.getMessages();
+			Log.d("DroidCurse", "Got artist response:");
+			for (String s : artistList) {
+				Log.d("DroidCurse", s);
+			}
+			return artistList;
+		} catch (IOException e) {
+			Log.e("DroidCurse", "Couldn't get list of artists");
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
+	String[] getListOfSongs() {
+		try {
+			Log.d("DroidCurse", "Waiting for list response");
+			writer.write("list\r\n");
+			writer.flush();
+			String[] songList = listMonitor.getMessages();
+			Log.d("DroidCurse", "Got list response:");
+			for (String s : songList) {
+				Log.d("DroidCurse", s);
+			}
+			return songList;
+		} catch (IOException e) {
+			Log.e("DroidCurse", "Couldn't get list of songs");
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
