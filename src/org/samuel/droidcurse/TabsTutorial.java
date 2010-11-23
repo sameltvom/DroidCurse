@@ -44,9 +44,6 @@ public class TabsTutorial extends TabActivity {
         
         mTabHost.setOnTabChangedListener(tabChangedListener);
         
-        
-        
-        
         LinearLayout artistsLayout = (LinearLayout)findViewById(R.id.artists_layout); 	
 		listViewArtists =  new ListView(this);
 		listViewArtists.setOnItemClickListener(artistsItemClickListener);
@@ -66,27 +63,23 @@ public class TabsTutorial extends TabActivity {
     }
     
     OnItemClickListener artistsItemClickListener = new OnItemClickListener() {
-
 		@Override
-		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-				long arg3) {
+		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 			Log.i("TabsTutorial", "Artists item clicked, arg2: "+arg2+" arg3: "+arg3);
+			model.changeArtist(arg2);
 		}
 	};
 
 	OnItemClickListener songsItemClickListener = new OnItemClickListener() {
-
 		@Override
-		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-				long arg3) {
+		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 			Log.i("TabsTutorial", "Songs item clicked, arg2: "+arg2+" arg3: "+arg3);
+			model.changeSong(arg2);
 		}
 	};
 
 	
-   
-    TabHost.OnTabChangeListener tabChangedListener = new TabHost.OnTabChangeListener() {
-		
+    TabHost.OnTabChangeListener tabChangedListener = new TabHost.OnTabChangeListener() {	
 		@Override
 		public void onTabChanged(String tabId) {
 			Log.i("TabsTutorial", "Changing tab: "+tabId);

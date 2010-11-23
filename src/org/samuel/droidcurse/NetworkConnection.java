@@ -47,7 +47,8 @@ public class NetworkConnection {
 			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			networkReaderThread = new NetworkReaderThread(socket, artistMonitor, listMonitor);
 			networkReaderThread.start();
-			
+	
+			/* Get list of artists and add them to the model */
 			Log.d("DroidCurse", "Waiting for artist response");
 			writer.write("artist\r\n");
 			writer.flush();
@@ -59,6 +60,7 @@ public class NetworkConnection {
 			Log.d("DroidCurse", "Setting artist: "+0);
 			model.setArtistList(artistList);
 		
+			/* Get list of song and add them to the model */
 			Log.d("DroidCurse", "Waiting for list response");
 			writer.write("list\r\n");
 			writer.flush();
@@ -97,52 +99,6 @@ public class NetworkConnection {
 			singletonInstance = new NetworkConnection();
 		}
 		return singletonInstance;
-	}
-	
-	
-	// TODO: Do this in a seperate thread and when done update the gui
-	public String[] getListOfArtists() {
-		//return new String[]{"Bob Dylan - I want you", "Johnny cash - Get the rhythm"};
-		try {
-			Log.d("DroidCurse", "Waiting for artist response");
-			writer.write("artist\r\n");
-			writer.flush();
-			String[] res = artistMonitor.getMessages();
-			Log.d("DroidCurse", "Got artist response:");
-			for (String s : res) {
-				Log.d("DroidCurse", s);
-			}
-			Log.d("DroidCurse", "Setting artist: "+0);
-		
-			return res;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-		
-	}
-	
-	// TODO: Do this in a seperate thread and when done update the gui
-	public String[] getListOfSongs() {
-		//return new String[]{"Bob Dylan - I want you", "Johnny cash - Get the rhythm"};
-		try {
-			Log.d("DroidCurse", "Waiting for list response");
-			writer.write("list\r\n");
-			writer.flush();
-			String[] res = listMonitor.getMessages();
-			Log.d("DroidCurse", "Got list response:");
-			for (String s : res) {
-				Log.d("DroidCurse", s);
-			}
-			
-			return res;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-		
 	}
 	
 	
