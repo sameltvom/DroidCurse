@@ -59,13 +59,13 @@ public class TabsTutorial extends TabActivity {
         mTabHost.setCurrentTab(0);
     
         // first fill tab so it's not empty
-        fillArtistTab();   
+        fillArtistsTab();   
     }
     
     OnItemClickListener artistsItemClickListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-			Log.i("TabsTutorial", "Artists item clicked, arg2: "+arg2+" arg3: "+arg3);
+			Log.i("DroidCurse", "Artists item clicked, arg2: "+arg2+" arg3: "+arg3);
 			model.changeArtist(arg2);
 		}
 	};
@@ -73,7 +73,7 @@ public class TabsTutorial extends TabActivity {
 	OnItemClickListener songsItemClickListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-			Log.i("TabsTutorial", "Songs item clicked, arg2: "+arg2+" arg3: "+arg3);
+			Log.i("DroidCurse", "Songs item clicked, arg2: "+arg2+" arg3: "+arg3);
 			model.changeSong(arg2);
 		}
 	};
@@ -82,25 +82,35 @@ public class TabsTutorial extends TabActivity {
     TabHost.OnTabChangeListener tabChangedListener = new TabHost.OnTabChangeListener() {	
 		@Override
 		public void onTabChanged(String tabId) {
-			Log.i("TabsTutorial", "Changing tab: "+tabId);
+			Log.i("DroidCurse", "TabsTutorial: Changing tab: "+tabId);
 		
 			if (tabId.equals("tab_songs")) {
 				fillSongsTab();
 			} else if (tabId.equals("tab_artists")) {
-				fillArtistTab();
+				fillArtistsTab();
 			}
 		}
 	};
 	
-	private void fillArtistTab() {
-		String []listItems;				
+	private void fillSongsTab() {
+		String []listItems;
+		Log.d("DroidCurse", "TabsTutorial: model.getListOfSongs()");
         listItems = model.getListOfSongs();
+		Log.d("DroidCurse", "TabsTutorial: model.getListOfSongs() - finished");
+		for (String s : listItems) {
+			Log.d("DroidCurse", "TabsTutorial: Song: "+s);
+		}
         listViewSongs.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
 	}
 	
-	private void fillSongsTab() {
-		String []listItems;				
+	private void fillArtistsTab() {
+		String []listItems;	
+		Log.d("DroidCurse", "TabsTutorial: model.getListOfArtists()");
         listItems = model.getListOfArtists();
+        Log.d("DroidCurse", "TabsTutorial: model.getListOfArtists() - finished");
+        for (String s : listItems) {
+			Log.d("DroidCurse", "TabsTutorial: Artist: "+s);
+		}
         listViewArtists.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
 	}
     
