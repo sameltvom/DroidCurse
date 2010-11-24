@@ -80,7 +80,10 @@ public class NetworkConnection {
 
 	public void disconnect() {
 		try {
+			quit();
+			Log.d("DroidCurse", "Network: Closing socket");
 			socket.close();
+			Log.d("DroidCurse", "Network: Closing socket - finished");
 		} catch (IOException e) {
 			Log.e("DroidCurse", "Couldn't close socket");
 			e.printStackTrace();
@@ -98,6 +101,18 @@ public class NetworkConnection {
 		return singletonInstance;
 	}
 	
+	public void quit() {
+		Log.d("DroidCurse", "Quiting");
+		try {
+			writer.write("quit\r\n");
+			writer.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.d("DroidCurse", "Quiting - finished");
+		
+	}
 	
 	// TODO: Do this in a seperate thread
 	public void setArtist(int position) {
