@@ -175,4 +175,16 @@ public class NetworkConnection {
 			//return null;
 		}
 	}
+
+	public void setAllArtists() {
+		Log.d("DroidCurse", "Setting all artists");
+		try {
+			writer.write("all artists\r\n");
+			writer.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.d("DroidCurse", "Setting all artists done");
+	}
 }

@@ -1,15 +1,26 @@
 package org.samuel.droidcurse;
 
+import java.util.LinkedList;
+
 public class Model {
 	private static Model model;
-	private String[] listOfSongs;
-	private String[] listOfArtists;
+	private LinkedList<String> listOfSongs;
+	private LinkedList<String> listOfArtists;
 	
 	public Model() {
-		listOfArtists = new String[]{"0 - Bob Dylan", "1 - Swen Andersson", "2 - Gullbritt"};
-		listOfSongs = new String[]{"0 - Bob Dylan - Heavy rain", "1 - Bob Dylan - Idiot wind",
-									"2 - Bob Dylan - I want you", "3 - Swen Andersson - Rosor",
-									"4 - Swen Andersson - Damer", "5 - Gullbritt - Gamla guvvar"};
+		listOfArtists = new LinkedList<String>();
+		listOfSongs = new LinkedList<String>();
+		
+		listOfArtists.add("0 - Bob Dylan");
+		listOfArtists.add("1 - Swen Andersson");
+		listOfArtists.add("2 - Gullbritt");
+		
+		listOfSongs.add("0 - Bob Dylan - Heavy rain");
+		listOfSongs.add("1 - Bob Dylan - Idiot wind");
+		listOfSongs.add("2 - Bob Dylan - I want you");
+		listOfSongs.add("3 - Swen Andersson - Rosor");
+		listOfSongs.add("4 - Swen Andersson - Damer");
+		listOfSongs.add("5 - Gullbritt - Gamla guvvar");
 	}
 	
 	public static Model getInstance() {
@@ -20,19 +31,19 @@ public class Model {
 	}
 
 
-	synchronized public String[] getListOfSongs() {
+	synchronized public LinkedList<String> getListOfSongs() {
 		return listOfSongs;
 	}
 	
-	synchronized public String[] getListOfArtists() {
+	synchronized public LinkedList<String> getListOfArtists() {
 		return listOfArtists;
 	}
 
-	synchronized public void setArtistList(String[] listOfArtists) {
+	synchronized public void setArtistList(LinkedList<String> listOfArtists) {
 		this.listOfArtists = listOfArtists;
 	}
 
-	synchronized public void setSongList(String[] listOfSongs) {
+	synchronized public void setSongList(LinkedList<String> listOfSongs) {
 		this.listOfSongs = listOfSongs;
 	}
 
@@ -46,6 +57,12 @@ public class Model {
 		// TODO: Add a message to a mailbox that later is being consumed by another thread
 		NetworkConnection networkConnection = NetworkConnection.getInstance();
 		networkConnection.playSong(songId);
+	}
+
+	synchronized public void changeAllArtists() {
+		// TODO: Add a message to a mailbox that later is being consumed by another thread
+		NetworkConnection networkConnection = NetworkConnection.getInstance();
+		networkConnection.setAllArtists();
 	}
 
 }

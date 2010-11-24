@@ -1,6 +1,7 @@
 package org.samuel.droidcurse;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 
 import android.app.TabActivity;
@@ -66,7 +67,11 @@ public class TabsTutorial extends TabActivity {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 			Log.i("DroidCurse", "Artists item clicked, arg2: "+arg2+" arg3: "+arg3);
-			model.changeArtist(arg2);
+			if (arg2 == 0) {
+				model.changeAllArtists();
+			} else{
+				model.changeArtist(arg2-1);
+			}
 		}
 	};
 
@@ -93,7 +98,7 @@ public class TabsTutorial extends TabActivity {
 	};
 	
 	private void fillSongsTab() {
-		String []listItems;
+		LinkedList<String> listItems;
 		Log.d("DroidCurse", "TabsTutorial: model.getListOfSongs()");
         listItems = model.getListOfSongs();
 		Log.d("DroidCurse", "TabsTutorial: model.getListOfSongs() - finished");
@@ -104,13 +109,14 @@ public class TabsTutorial extends TabActivity {
 	}
 	
 	private void fillArtistsTab() {
-		String []listItems;	
+		LinkedList<String> listItems;	
 		Log.d("DroidCurse", "TabsTutorial: model.getListOfArtists()");
         listItems = model.getListOfArtists();
         Log.d("DroidCurse", "TabsTutorial: model.getListOfArtists() - finished");
         for (String s : listItems) {
 			Log.d("DroidCurse", "TabsTutorial: Artist: "+s);
 		}
+        
         listViewArtists.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
 	}
     

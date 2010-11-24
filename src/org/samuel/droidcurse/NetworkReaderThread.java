@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.LinkedList;
 
 import android.util.Log;
 
@@ -40,8 +41,17 @@ public class NetworkReaderThread extends Thread {
 					// this call will get the messages and notify those who wait for it
 					// it's not a typical mailbox, more like an observable
 					Log.d("DroidCurse", "ReaderThread: Getting messages from artistMonitor");
-					String[] listOfArtists = artistMonitor.getMessages();
+					LinkedList<String> listOfArtists = artistMonitor.getMessages();
+					
+					// adding "all artists" item in the beginning
+			        listOfArtists.addFirst("<All artists>");
+					
 					Log.d("DroidCurse", "ReaderThread: Getting messages from artistMonitor - finished");
+					Log.d("DroidCurse", "ReaderThread: listOfArtists:");
+					for (String s : listOfArtists) {
+						Log.d("DroidCurse", "ReaderThread: artist: "+s);	
+					}
+					
 					Log.d("DroidCurse", "ReaderThread: Setting model artist list");
 					model.setArtistList(listOfArtists);
 					Log.d("DroidCurse", "ReaderThread: Setting model artist list - finished");
@@ -55,8 +65,12 @@ public class NetworkReaderThread extends Thread {
 					// this call will get the messages and notify those who wait for it
 					// it's not a typical mailbox, more like an observable
 					Log.d("DroidCurse", "ReaderThread: Getting messages from listMonitor");
-					String[] listOfSongs = listMonitor.getMessages();
+					LinkedList<String> listOfSongs = listMonitor.getMessages();
 					Log.d("DroidCurse", "ReaderThread: Getting messages from listMonitor - finished");
+					Log.d("DroidCurse", "ReaderThread: listOfSongs:");
+					for (String s : listOfSongs) {
+						Log.d("DroidCurse", "ReaderThread: song: "+s);	
+					}
 					Log.d("DroidCurse", "ReaderThread: Setting model song list");
 					model.setSongList(listOfSongs);
 					Log.d("DroidCurse", "ReaderThread: Setting model song list - finished");
@@ -68,6 +82,9 @@ public class NetworkReaderThread extends Thread {
 					//Log.d("DroidCurse", "Fetching song list done, setting song list to model");
 					//model.setSongList(listOfSongs);
 					//Log.d("DroidCurse", "Song list finished");
+				} else if (line.startsWith("ALL_ARTISTS ALL_ARTISTS_OK")) {
+					Log.d("DroidCurse", "ReaderThread: Artists changed, fetching song list...");
+					networkConnection.sendGetListOfSongs();
 				}
 			}
 		} catch (IOException e) {

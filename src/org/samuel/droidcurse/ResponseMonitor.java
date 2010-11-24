@@ -12,39 +12,35 @@ public class ResponseMonitor {
 	
 	public ResponseMonitor() {
 		mailBox = new LinkedList<String>();
+		done = false;
 	}
 	
 	public synchronized void addMessage(String message) {
 		done = false;
+		Log.d("DroidCurse", "Monitor: Adding message: "+message);
 		mailBox.add(message);
 	}
 	
-	// when all messages are added, tell the listener to wake up
-	/*public synchronized void setReady() {
-		notifyAll();
-	}*/
-	
 	// when done, call this
-	public synchronized String[] getMessages() {
-		String []res = new String[mailBox.size()];
-		mailBox.toArray(res);
+	public synchronized LinkedList<String> getMessages() {
+		LinkedList<String> tmp = new LinkedList<String>(mailBox);
 		mailBox.clear();
 		done = true;
 		notifyAll();
-		return res;
+		return tmp;
 	}
 
 	public synchronized void waitForResponse() {
-		Log.d("DroidCurse", "Waiting for monitor ready");
+		Log.d("DroidCurse", "Monitor: Waiting for monitor ready");
 		while (!done) {
 			try {
 				wait();
-				Log.d("DroidCurse", "Woken up!");
+				Log.d("DroidCurse", "Monitor: Woken up!");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		Log.d("DroidCurse", "Waiting for monitor ready - finished");
+		Log.d("DroidCurse", "Monitor: Waiting for monitor ready - finished");
 	}
 }
