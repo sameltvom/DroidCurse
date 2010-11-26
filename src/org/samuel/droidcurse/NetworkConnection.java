@@ -28,6 +28,7 @@ public class NetworkConnection {
 	private BufferedWriter writer;
 	
 	private ResponseMonitor artistMonitor;
+	private ResponseMonitor albumMonitor;
 	private ResponseMonitor listMonitor;
 	
 	private Model model;
@@ -36,6 +37,7 @@ public class NetworkConnection {
 		host = DEFAULT_HOST;
 		port = DEFAULT_PORT;
 		artistMonitor = new ResponseMonitor();
+		albumMonitor = new ResponseMonitor();
 		listMonitor = new ResponseMonitor();
 		model = Model.getInstance();
 	}
@@ -52,7 +54,7 @@ public class NetworkConnection {
 		try {
 			socket = new Socket(host, port);
 			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-			networkReaderThread = new NetworkReaderThread(socket, artistMonitor, listMonitor);
+			networkReaderThread = new NetworkReaderThread(socket, artistMonitor, albumMonitor, listMonitor);
 			networkReaderThread.start();
 	
 			/* Get list of artists and add them to the model */
@@ -64,6 +66,14 @@ public class NetworkConnection {
 			Log.d("DroidCurse", "Network: Waiting for response from artistMonitor...");
 			artistMonitor.waitForResponse();
 			Log.d("DroidCurse", "Network: Waiting for response from artistMonitor - finished");
+			
+			Log.d("DroidCurse", "Network: Sending getListofAlbums");
+			sendGetListOfAlbums();
+			Log.d("DroidCurse", "Network: Sending getListofAlbums - finished");
+			Log.d("DroidCurse", "Network: Waiting for response from albumMonitor...");
+			albumMonitor.waitForResponse();
+			Log.d("DroidCurse", "Network: Waiting for response from albumMonitor - finished");
+			
 			
 			/* Get list of song and add them to the model */
 			//String[] songList = getListOfSongs();
@@ -122,19 +132,6 @@ public class NetworkConnection {
 	}
 	
 	// TODO: Do this in a seperate thread
-	public void setArtist(int position) {
-		Log.d("DroidCurse", "Setting artist: "+position);
-		try {
-			writer.write("set artist "+position+"\r\n");
-			writer.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Log.d("DroidCurse", "Setting artist done");
-	}
-
-	// TODO: Do this in a seperate thread
 	public void playSong(int position) {
 		Log.d("DroidCurse", "Playing song: "+position);
 		try {
@@ -165,6 +162,25 @@ public class NetworkConnection {
 		}
 	}
 	
+	void sendGetListOfAlbums() {
+		try {
+			Log.d("DroidCurse", "Waiting for album response");
+			writer.write("album\r\n");
+			writer.flush();
+			/*String[] albumList = albumMonitor.getMessages();
+			Log.d("DroidCurse", "Got album response:");
+			for (String s : albumList) {
+				Log.d("DroidCurse", s);
+			}
+			return albumList;*/
+		} catch (IOException e) {
+			Log.e("DroidCurse", "Couldn't get list of albums");
+			e.printStackTrace();
+			//return null;
+		}
+	}
+	
+	
 	void sendGetListOfSongs() {
 		try {
 			Log.d("DroidCurse", "Waiting for list response");
@@ -183,6 +199,19 @@ public class NetworkConnection {
 		}
 	}
 
+	// TODO: Do this in a seperate thread
+	public void setArtist(int position) {
+		Log.d("DroidCurse", "Setting artist: "+position);
+		try {
+			writer.write("set artist "+position+"\r\n");
+			writer.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.d("DroidCurse", "Setting artist done");
+	}
+	
 	public void setAllArtists() {
 		Log.d("DroidCurse", "Setting all artists");
 		try {
@@ -195,6 +224,32 @@ public class NetworkConnection {
 		Log.d("DroidCurse", "Setting all artists done");
 	}
 
+	
+
+	public void setAllAlbums() {
+		Log.d("DroidCurse", "Setting all albums");
+		try {
+			writer.write("all albums\r\n");
+			writer.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.d("DroidCurse", "Setting all albums done");
+	}
+
+	public void setAlbum(int albumId) {
+		Log.d("DroidCurse", "Setting album: "+albumId);
+		try {
+			writer.write("set album "+albumId+"\r\n");
+			writer.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.d("DroidCurse", "Setting album done");	
+	}
+	
 	public String[] getListOfHosts() {
 		return hostList;
 	}

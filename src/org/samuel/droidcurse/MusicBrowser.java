@@ -21,6 +21,7 @@ public class MusicBrowser extends TabActivity {
 	private Model model;
 	//private NetworkConnection networkConnection;
 	private ListView listViewArtists;
+	private ListView listViewAlbums;
 	private ListView listViewSongs;
 	
 	/** Called when the activity is first created. */
@@ -40,7 +41,7 @@ public class MusicBrowser extends TabActivity {
         //    .setContent(intent);
         
         mTabHost.addTab(mTabHost.newTabSpec("tab_artists").setIndicator("Artists").setContent(R.id.artists_layout));
-        //mTabHost.addTab(mTabHost.newTabSpec("tab_albums").setIndicator("Albums").setContent(R.id.albums_layout));
+        mTabHost.addTab(mTabHost.newTabSpec("tab_albums").setIndicator("Albums").setContent(R.id.albums_layout));
         mTabHost.addTab(mTabHost.newTabSpec("tab_songs").setIndicator("Songs").setContent(R.id.songs_layout));
         
         mTabHost.setOnTabChangedListener(tabChangedListener);
@@ -49,6 +50,11 @@ public class MusicBrowser extends TabActivity {
 		listViewArtists =  new ListView(this);
 		listViewArtists.setOnItemClickListener(artistsItemClickListener);
         artistsLayout.addView(listViewArtists);
+        
+        LinearLayout albumsLayout = (LinearLayout)findViewById(R.id.albums_layout); 	
+		listViewAlbums =  new ListView(this);
+		listViewAlbums.setOnItemClickListener(albumsItemClickListener);
+        albumsLayout.addView(listViewAlbums);
         
         LinearLayout songsLayout = (LinearLayout)findViewById(R.id.songs_layout); 	
 		listViewSongs =  new ListView(this);
@@ -80,8 +86,24 @@ public class MusicBrowser extends TabActivity {
 			} else{
 				model.changeArtist(arg2-1);
 			}
+			
+			// update the album list as well
+			model.changeAllAlbums();
 		}
 	};
+	
+	OnItemClickListener albumsItemClickListener = new OnItemClickListener() {
+		@Override
+		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+			Log.i("DroidCurse", "Albums item clicked, arg2: "+arg2+" arg3: "+arg3);
+			if (arg2 == 0) {
+				model.changeAllAlbums();
+			} else{
+				model.changeAlbum(arg2-1);
+			}
+		}
+	};
+
 
 	OnItemClickListener songsItemClickListener = new OnItemClickListener() {
 		@Override
@@ -99,6 +121,8 @@ public class MusicBrowser extends TabActivity {
 		
 			if (tabId.equals("tab_songs")) {
 				fillSongsTab();
+			} else if (tabId.equals("tab_albums")) {
+				fillAlbumsTab();
 			} else if (tabId.equals("tab_artists")) {
 				fillArtistsTab();
 			}
@@ -111,6 +135,14 @@ public class MusicBrowser extends TabActivity {
         listItems = model.getListOfSongs();
 		Log.d("DroidCurse", "MusicBrowser: model.getListOfSongs() - finished");
 		listViewSongs.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
+	}
+	
+	private void fillAlbumsTab() {
+		LinkedList<String> listItems;
+		Log.d("DroidCurse", "MusicBrowser: model.getListOfAlbums()");
+        listItems = model.getListOfAlbums();
+		Log.d("DroidCurse", "MusicBrowser: model.getListOfSongs() - finished");
+		listViewAlbums.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
 	}
 	
 	private void fillArtistsTab() {

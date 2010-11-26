@@ -11,13 +11,15 @@ import android.util.Log;
 public class NetworkReaderThread extends Thread {
 	private Socket socket;
 	private ResponseMonitor artistMonitor;
+	private ResponseMonitor albumMonitor;
 	private ResponseMonitor listMonitor;
 	private NetworkConnection networkConnection;
 	private Model model;
 	
-	public NetworkReaderThread(Socket socket, ResponseMonitor artistMonitor, ResponseMonitor listMonitor) {
+	public NetworkReaderThread(Socket socket, ResponseMonitor artistMonitor, ResponseMonitor albumMonitor, ResponseMonitor listMonitor) {
 		this.socket = socket;
 		this.artistMonitor = artistMonitor;
+		this.albumMonitor = albumMonitor;
 		this.listMonitor = listMonitor;
 		this.model = Model.getInstance();
 		this.networkConnection = NetworkConnection.getInstance();
@@ -55,7 +57,31 @@ public class NetworkReaderThread extends Thread {
 					Log.d("DroidCurse", "ReaderThread: Setting model artist list");
 					model.setArtistList(listOfArtists);
 					Log.d("DroidCurse", "ReaderThread: Setting model artist list - finished");
-				} else if (line.startsWith("LIST LIST_ITM")) {
+				} if (line.startsWith("ALBUMS ALBUMS_ITM ")) {
+					Log.d("DroidCurse", "ReaderThread: Getting album item");
+					// an album item
+					String words[] = line.split("ALBUMS ALBUMS_ITM ");
+					String albumItem = words[1];
+					albumMonitor.addMessage(albumItem);
+				} else if (line.startsWith("ALBUMS ALBUMS_END")) {
+					Log.d("DroidCurse", "ReaderThread: Getting messages from albumMonitor");
+					LinkedList<String> listOfAlbums = albumMonitor.getMessages();
+					
+					// adding "all albums" item in the beginning
+			        listOfAlbums.addFirst("<All albums>");
+					
+					Log.d("DroidCurse", "ReaderThread: Getting messages from albumMonitor - finished");
+					Log.d("DroidCurse", "ReaderThread: listOfAlbums:");
+					for (String s : listOfAlbums) {
+						Log.d("DroidCurse", "ReaderThread: album: "+s);	
+					}
+					
+					Log.d("DroidCurse", "ReaderThread: Setting model album list");
+					model.setAlbumList(listOfAlbums);
+					Log.d("DroidCurse", "ReaderThread: Setting model album list - finished");
+				}
+				
+				else if (line.startsWith("LIST LIST_ITM")) {
 					// a song item
 					String words[] = line.split("LIST LIST_ITM ");
 					String songItem = words[1];
@@ -76,15 +102,21 @@ public class NetworkReaderThread extends Thread {
 					Log.d("DroidCurse", "ReaderThread: Setting model song list - finished");
 				} else if (line.startsWith("INF_ARTIST")) {
 					// the artist has changed
+					Log.d("DroidCurse", "ReaderThread: Artists changed, fetching album list...");
+					networkConnection.sendGetListOfAlbums();
 					Log.d("DroidCurse", "ReaderThread: Artists changed, fetching song list...");
 					networkConnection.sendGetListOfSongs();
+					
 					//String []listOfSongs = networkConnection.getListOfSongs();
 					//Log.d("DroidCurse", "Fetching song list done, setting song list to model");
 					//model.setSongList(listOfSongs);
 					//Log.d("DroidCurse", "Song list finished");
 				} else if (line.startsWith("ALL_ARTISTS ALL_ARTISTS_OK")) {
+					Log.d("DroidCurse", "ReaderThread: Artists changed, fetching album list...");
+					networkConnection.sendGetListOfAlbums();
 					Log.d("DroidCurse", "ReaderThread: Artists changed, fetching song list...");
 					networkConnection.sendGetListOfSongs();
+					
 				}
 			}
 		} catch (IOException e) {
