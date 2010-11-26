@@ -111,6 +111,15 @@ public class NetworkReaderThread extends Thread {
 					//Log.d("DroidCurse", "Fetching song list done, setting song list to model");
 					//model.setSongList(listOfSongs);
 					//Log.d("DroidCurse", "Song list finished");
+				} else if (line.startsWith("INF_ALBUM")) {
+					// the artist has changed
+					Log.d("DroidCurse", "ReaderThread: Albums changed, fetching song list...");
+					networkConnection.sendGetListOfSongs();
+					
+					//String []listOfSongs = networkConnection.getListOfSongs();
+					//Log.d("DroidCurse", "Fetching song list done, setting song list to model");
+					//model.setSongList(listOfSongs);
+					//Log.d("DroidCurse", "Song list finished");
 				} else if (line.startsWith("ALL_ARTISTS ALL_ARTISTS_OK")) {
 					Log.d("DroidCurse", "ReaderThread: Artists changed, fetching album list...");
 					networkConnection.sendGetListOfAlbums();
