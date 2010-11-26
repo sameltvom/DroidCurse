@@ -11,6 +11,8 @@ import android.util.Log;
 public class NetworkConnection {
 	private static NetworkConnection singletonInstance;
 	
+	private String[] hostList = new String[]{"192.168.0.100", "192.168.0.123"};
+	
 	// Host: trudy
 	//public static final String DEFAULT_HOST = "192.168.0.123";
 	
@@ -191,5 +193,9 @@ public class NetworkConnection {
 			e.printStackTrace();
 		}
 		Log.d("DroidCurse", "Setting all artists done");
+	}
+
+	public String[] getListOfHosts() {
+		return hostList;
 	}
 }
