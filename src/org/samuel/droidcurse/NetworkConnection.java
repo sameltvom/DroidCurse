@@ -11,7 +11,12 @@ import android.util.Log;
 public class NetworkConnection {
 	private static NetworkConnection singletonInstance;
 	
-	public static final String DEFAULT_HOST = "192.168.0.123";
+	// Host: trudy
+	//public static final String DEFAULT_HOST = "192.168.0.123";
+	
+	// Host: dave
+	public static final String DEFAULT_HOST = "192.168.0.100";
+	
 	public static final int DEFAULT_PORT = 5000;
 	
 	private String host;
