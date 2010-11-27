@@ -57,13 +57,13 @@ public class NetworkReaderThread extends Thread {
 					Log.d("DroidCurse", "ReaderThread: Setting model artist list");
 					model.setArtistList(listOfArtists);
 					Log.d("DroidCurse", "ReaderThread: Setting model artist list - finished");
-				} if (line.startsWith("ALBUMS ALBUMS_ITM ")) {
+				} if (line.startsWith("ALBUM ALBUM_ITM ")) {
 					Log.d("DroidCurse", "ReaderThread: Getting album item");
 					// an album item
-					String words[] = line.split("ALBUMS ALBUMS_ITM ");
+					String words[] = line.split("ALBUM ALBUM_ITM ");
 					String albumItem = words[1];
 					albumMonitor.addMessage(albumItem);
-				} else if (line.startsWith("ALBUMS ALBUMS_END")) {
+				} else if (line.startsWith("ALBUM ALBUM_END")) {
 					Log.d("DroidCurse", "ReaderThread: Getting messages from albumMonitor");
 					LinkedList<String> listOfAlbums = albumMonitor.getMessages();
 					
@@ -122,9 +122,11 @@ public class NetworkReaderThread extends Thread {
 					//Log.d("DroidCurse", "Song list finished");
 				} else if (line.startsWith("ALL_ARTISTS ALL_ARTISTS_OK")) {
 					Log.d("DroidCurse", "ReaderThread: Artists changed, fetching album list...");
+					// this will trigger INF_ALBUM which will request song list, sno
+					// there is no need to do that here
 					networkConnection.sendGetListOfAlbums();
-					Log.d("DroidCurse", "ReaderThread: Artists changed, fetching song list...");
-					networkConnection.sendGetListOfSongs();
+					//Log.d("DroidCurse", "ReaderThread: Artists changed, fetching song list...");
+					//networkConnection.sendGetListOfSongs();
 					
 				}
 			}
