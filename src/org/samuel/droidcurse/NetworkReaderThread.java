@@ -31,7 +31,7 @@ public class NetworkReaderThread extends Thread {
 			
 			while (true) {
 				String line = reader.readLine();
-				Log.i("DroidCurse", "ReaderThread: Got line: "+line);
+				OurLog.i("DroidCurse", "ReaderThread: Got line: "+line);
 				if (line.startsWith("ARTIST ARTIST_ITM ")) {
 					// an artist item
 					String words[] = line.split("ARTIST ARTIST_ITM ");
@@ -42,43 +42,43 @@ public class NetworkReaderThread extends Thread {
 					//artistMonitor.setReady();
 					// this call will get the messages and notify those who wait for it
 					// it's not a typical mailbox, more like an observable
-					Log.d("DroidCurse", "ReaderThread: Getting messages from artistMonitor");
+					OurLog.d("DroidCurse", "ReaderThread: Getting messages from artistMonitor");
 					LinkedList<String> listOfArtists = artistMonitor.getMessages();
 					
 					// adding "all artists" item in the beginning
 			        listOfArtists.addFirst("<All artists>");
 					
-					Log.d("DroidCurse", "ReaderThread: Getting messages from artistMonitor - finished");
-					Log.d("DroidCurse", "ReaderThread: listOfArtists:");
+					OurLog.d("DroidCurse", "ReaderThread: Getting messages from artistMonitor - finished");
+					OurLog.d("DroidCurse", "ReaderThread: listOfArtists:");
 					for (String s : listOfArtists) {
-						Log.d("DroidCurse", "ReaderThread: artist: "+s);	
+						OurLog.d("DroidCurse", "ReaderThread: artist: "+s);	
 					}
 					
-					Log.d("DroidCurse", "ReaderThread: Setting model artist list");
+					OurLog.d("DroidCurse", "ReaderThread: Setting model artist list");
 					model.setArtistList(listOfArtists);
-					Log.d("DroidCurse", "ReaderThread: Setting model artist list - finished");
+					OurLog.d("DroidCurse", "ReaderThread: Setting model artist list - finished");
 				} if (line.startsWith("ALBUM ALBUM_ITM ")) {
-					Log.d("DroidCurse", "ReaderThread: Getting album item");
+					OurLog.d("DroidCurse", "ReaderThread: Getting album item");
 					// an album item
 					String words[] = line.split("ALBUM ALBUM_ITM ");
 					String albumItem = words[1];
 					albumMonitor.addMessage(albumItem);
 				} else if (line.startsWith("ALBUM ALBUM_END")) {
-					Log.d("DroidCurse", "ReaderThread: Getting messages from albumMonitor");
+					OurLog.d("DroidCurse", "ReaderThread: Getting messages from albumMonitor");
 					LinkedList<String> listOfAlbums = albumMonitor.getMessages();
 					
 					// adding "all albums" item in the beginning
 			        listOfAlbums.addFirst("<All albums>");
 					
-					Log.d("DroidCurse", "ReaderThread: Getting messages from albumMonitor - finished");
-					Log.d("DroidCurse", "ReaderThread: listOfAlbums:");
+					OurLog.d("DroidCurse", "ReaderThread: Getting messages from albumMonitor - finished");
+					OurLog.d("DroidCurse", "ReaderThread: listOfAlbums:");
 					for (String s : listOfAlbums) {
-						Log.d("DroidCurse", "ReaderThread: album: "+s);	
+						OurLog.d("DroidCurse", "ReaderThread: album: "+s);	
 					}
 					
-					Log.d("DroidCurse", "ReaderThread: Setting model album list");
+					OurLog.d("DroidCurse", "ReaderThread: Setting model album list");
 					model.setAlbumList(listOfAlbums);
-					Log.d("DroidCurse", "ReaderThread: Setting model album list - finished");
+					OurLog.d("DroidCurse", "ReaderThread: Setting model album list - finished");
 				}
 				
 				else if (line.startsWith("LIST LIST_ITM")) {
@@ -90,50 +90,50 @@ public class NetworkReaderThread extends Thread {
 					// now all song items are sent
 					// this call will get the messages and notify those who wait for it
 					// it's not a typical mailbox, more like an observable
-					Log.d("DroidCurse", "ReaderThread: Getting messages from listMonitor");
+					OurLog.d("DroidCurse", "ReaderThread: Getting messages from listMonitor");
 					LinkedList<String> listOfSongs = listMonitor.getMessages();
-					Log.d("DroidCurse", "ReaderThread: Getting messages from listMonitor - finished");
-					Log.d("DroidCurse", "ReaderThread: listOfSongs:");
+					OurLog.d("DroidCurse", "ReaderThread: Getting messages from listMonitor - finished");
+					OurLog.d("DroidCurse", "ReaderThread: listOfSongs:");
 					for (String s : listOfSongs) {
-						Log.d("DroidCurse", "ReaderThread: song: "+s);	
+						OurLog.d("DroidCurse", "ReaderThread: song: "+s);	
 					}
-					Log.d("DroidCurse", "ReaderThread: Setting model song list");
+					OurLog.d("DroidCurse", "ReaderThread: Setting model song list");
 					model.setSongList(listOfSongs);
-					Log.d("DroidCurse", "ReaderThread: Setting model song list - finished");
+					OurLog.d("DroidCurse", "ReaderThread: Setting model song list - finished");
 				} else if (line.startsWith("INF_ARTIST")) {
 					// the artist has changed
-					Log.d("DroidCurse", "ReaderThread: Artists changed, fetching album list...");
+					OurLog.d("DroidCurse", "ReaderThread: Artists changed, fetching album list...");
 					networkConnection.sendGetListOfAlbums();
-					Log.d("DroidCurse", "ReaderThread: Artists changed, fetching song list...");
+					OurLog.d("DroidCurse", "ReaderThread: Artists changed, fetching song list...");
 					networkConnection.sendGetListOfSongs();
 					
 					//String []listOfSongs = networkConnection.getListOfSongs();
-					//Log.d("DroidCurse", "Fetching song list done, setting song list to model");
+					//OurLog.d("DroidCurse", "Fetching song list done, setting song list to model");
 					//model.setSongList(listOfSongs);
-					//Log.d("DroidCurse", "Song list finished");
+					//OurLog.d("DroidCurse", "Song list finished");
 				} else if (line.startsWith("INF_ALBUM")) {
 					// the artist has changed
-					Log.d("DroidCurse", "ReaderThread: Albums changed, fetching song list...");
+					OurLog.d("DroidCurse", "ReaderThread: Albums changed, fetching song list...");
 					networkConnection.sendGetListOfSongs();
 					
 					//String []listOfSongs = networkConnection.getListOfSongs();
-					//Log.d("DroidCurse", "Fetching song list done, setting song list to model");
+					//OurLog.d("DroidCurse", "Fetching song list done, setting song list to model");
 					//model.setSongList(listOfSongs);
-					//Log.d("DroidCurse", "Song list finished");
+					//OurLog.d("DroidCurse", "Song list finished");
 				} else if (line.startsWith("ALL_ARTISTS ALL_ARTISTS_OK")) {
-					Log.d("DroidCurse", "ReaderThread: Artists changed, fetching album list...");
+					OurLog.d("DroidCurse", "ReaderThread: Artists changed, fetching album list...");
 					// this will trigger INF_ALBUM which will request song list, sno
 					// there is no need to do that here
 					networkConnection.sendGetListOfAlbums();
-					//Log.d("DroidCurse", "ReaderThread: Artists changed, fetching song list...");
+					//OurLog.d("DroidCurse", "ReaderThread: Artists changed, fetching song list...");
 					//networkConnection.sendGetListOfSongs();
 					
 				}
 			}
 		} catch (IOException e) {
-			Log.e("DroidCurse", "Couldn't readline, probably disconnected");
+			OurLog.e("DroidCurse", "Couldn't readline, probably disconnected");
 		}
-		Log.i("DroidCurse", "Exiting reader thread");
+		OurLog.i("DroidCurse", "Exiting reader thread");
 		
 	}
 }

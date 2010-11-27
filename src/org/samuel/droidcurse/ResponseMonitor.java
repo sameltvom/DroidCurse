@@ -17,7 +17,7 @@ public class ResponseMonitor {
 	
 	public synchronized void addMessage(String message) {
 		done = false;
-		Log.d("DroidCurse", "Monitor: Adding message: "+message);
+		OurLog.d("DroidCurse", "Monitor: Adding message: "+message);
 		mailBox.add(message);
 	}
 	
@@ -31,16 +31,16 @@ public class ResponseMonitor {
 	}
 
 	public synchronized void waitForResponse() {
-		Log.d("DroidCurse", "Monitor: Waiting for monitor ready");
+		OurLog.d("DroidCurse", "Monitor: Waiting for monitor ready");
 		while (!done) {
 			try {
 				wait();
-				Log.d("DroidCurse", "Monitor: Woken up!");
+				OurLog.d("DroidCurse", "Monitor: Woken up!");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		Log.d("DroidCurse", "Monitor: Waiting for monitor ready - finished");
+		OurLog.d("DroidCurse", "Monitor: Waiting for monitor ready - finished");
 	}
 }

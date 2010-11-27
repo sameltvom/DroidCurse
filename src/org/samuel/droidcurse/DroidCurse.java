@@ -41,7 +41,7 @@ public class DroidCurse extends Activity {
     OnItemSelectedListener spinnerListener = new OnItemSelectedListener() {
 		@Override
 		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-			Log.d("DroidCurse", "Spinner item chosen: "+arg2);
+			OurLog.d("DroidCurse", "Spinner item chosen: "+arg2);
 			selectedHost = hostList[arg2]; 
 		}
 
@@ -54,7 +54,7 @@ public class DroidCurse extends Activity {
     View.OnClickListener connectButtonListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Log.i("DroidCurse", "Clicked connect button");
+			OurLog.i("DroidCurse", "Clicked connect button");
 			
 			if (selectedHost != null) {
 				networkConnection.setHost(selectedHost);

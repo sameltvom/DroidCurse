@@ -80,7 +80,7 @@ public class MusicBrowser extends TabActivity {
     OnItemClickListener artistsItemClickListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-			Log.i("DroidCurse", "Artists item clicked, arg2: "+arg2+" arg3: "+arg3);
+			OurLog.i("DroidCurse", "Artists item clicked, arg2: "+arg2+" arg3: "+arg3);
 			if (arg2 == 0) {
 				model.changeAllArtists();
 			} else{
@@ -95,7 +95,7 @@ public class MusicBrowser extends TabActivity {
 	OnItemClickListener albumsItemClickListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-			Log.i("DroidCurse", "Albums item clicked, arg2: "+arg2+" arg3: "+arg3);
+			OurLog.i("DroidCurse", "Albums item clicked, arg2: "+arg2+" arg3: "+arg3);
 			if (arg2 == 0) {
 				model.changeAllAlbums();
 			} else{
@@ -108,7 +108,7 @@ public class MusicBrowser extends TabActivity {
 	OnItemClickListener songsItemClickListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-			Log.i("DroidCurse", "Songs item clicked, arg2: "+arg2+" arg3: "+arg3);
+			OurLog.i("DroidCurse", "Songs item clicked, arg2: "+arg2+" arg3: "+arg3);
 			model.changeSong(arg2);
 		}
 	};
@@ -117,7 +117,7 @@ public class MusicBrowser extends TabActivity {
     TabHost.OnTabChangeListener tabChangedListener = new TabHost.OnTabChangeListener() {	
 		@Override
 		public void onTabChanged(String tabId) {
-			Log.i("DroidCurse", "MusicBrowser: Changing tab: "+tabId);
+			OurLog.i("DroidCurse", "MusicBrowser: Changing tab: "+tabId);
 		
 			if (tabId.equals("tab_songs")) {
 				fillSongsTab();
@@ -131,25 +131,25 @@ public class MusicBrowser extends TabActivity {
 	
 	private void fillSongsTab() {
 		LinkedList<String> listItems;
-		Log.d("DroidCurse", "MusicBrowser: model.getListOfSongs()");
+		OurLog.d("DroidCurse", "MusicBrowser: model.getListOfSongs()");
         listItems = model.getListOfSongs();
-		Log.d("DroidCurse", "MusicBrowser: model.getListOfSongs() - finished");
+		OurLog.d("DroidCurse", "MusicBrowser: model.getListOfSongs() - finished");
 		listViewSongs.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
 	}
 	
 	private void fillAlbumsTab() {
 		LinkedList<String> listItems;
-		Log.d("DroidCurse", "MusicBrowser: model.getListOfAlbums()");
+		OurLog.d("DroidCurse", "MusicBrowser: model.getListOfAlbums()");
         listItems = model.getListOfAlbums();
-		Log.d("DroidCurse", "MusicBrowser: model.getListOfSongs() - finished");
+		OurLog.d("DroidCurse", "MusicBrowser: model.getListOfSongs() - finished");
 		listViewAlbums.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
 	}
 	
 	private void fillArtistsTab() {
 		LinkedList<String> listItems;	
-		Log.d("DroidCurse", "MusicBrowser: model.getListOfArtists()");
+		OurLog.d("DroidCurse", "MusicBrowser: model.getListOfArtists()");
         listItems = model.getListOfArtists();
-        Log.d("DroidCurse", "MusicBrowser: model.getListOfArtists() - finished");
+        OurLog.d("DroidCurse", "MusicBrowser: model.getListOfArtists() - finished");
         listViewArtists.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
 	}
     
