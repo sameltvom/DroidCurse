@@ -146,7 +146,13 @@ public class NetworkConnection {
 
 	void sendGetListOfArtists() {
 		try {
-			Log.d("DroidCurse", "Waiting for artist response");
+			// to get a list of all artist we have to be able to go through
+			// all songs in the database. Horribly ugly, indeed
+			setAllAlbums();
+			setAllArtists();
+			// horribly ugly but poor rhytmcurse has to be updated
+			Thread.sleep(500);
+			Log.d("DroidCurse", "Sending \"artist\" command");
 			writer.write("artist\r\n");
 			writer.flush();
 			/*String[] artistList = artistMonitor.getMessages();
@@ -155,6 +161,9 @@ public class NetworkConnection {
 				Log.d("DroidCurse", s);
 			}
 			return artistList;*/
+		} catch (InterruptedException e) {
+			Log.e("DroidCurse", "Couldn't sleep");
+			e.printStackTrace();
 		} catch (IOException e) {
 			Log.e("DroidCurse", "Couldn't get list of artists");
 			e.printStackTrace();
@@ -164,7 +173,7 @@ public class NetworkConnection {
 	
 	void sendGetListOfAlbums() {
 		try {
-			Log.d("DroidCurse", "Waiting for album response");
+			Log.d("DroidCurse", "Sending \"album\" command");
 			writer.write("album\r\n");
 			writer.flush();
 			/*String[] albumList = albumMonitor.getMessages();
@@ -183,7 +192,7 @@ public class NetworkConnection {
 	
 	void sendGetListOfSongs() {
 		try {
-			Log.d("DroidCurse", "Waiting for list response");
+			Log.d("DroidCurse", "Sending \"list\" command");
 			writer.write("list\r\n");
 			writer.flush();
 			/*String[] songList = listMonitor.getMessages();
