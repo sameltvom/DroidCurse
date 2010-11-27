@@ -5,4 +5,9 @@
     <string name="disconnect_button_label">Disconnect</string>
     <string name="no_songs">No songs</string>
     <string name="host_prompt">Select a rhythmbox host</string>
+    <string name="menu_hosts">Edit hosts</string>
+    <string name="host_edit_label">Hostname</string>
+	<string name="add_host_button_label">Add host</string>
+
+      
 </resources>

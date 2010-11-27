@@ -5,13 +5,15 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.LinkedList;
 
 import android.util.Log;
 
 public class NetworkConnection {
 	private static NetworkConnection singletonInstance;
 	
-	private String[] hostList = new String[]{"192.168.0.100", "192.168.0.123"};
+	//private String[] hostList = new String[]{"192.168.0.100", "192.168.0.123"};
+	private LinkedList<String> hostList; 
 	
 	// Host: trudy
 	//public static final String DEFAULT_HOST = "192.168.0.123";
@@ -40,6 +42,10 @@ public class NetworkConnection {
 		albumMonitor = new ResponseMonitor();
 		listMonitor = new ResponseMonitor();
 		model = Model.getInstance();
+		hostList = new LinkedList<String>();
+		hostList.add("192.168.0.100");
+		hostList.add("192.168.0.123");
+		
 	}
 
 	public void setHost(String host) {
@@ -259,7 +265,7 @@ public class NetworkConnection {
 		OurLog.d("DroidCurse", "Setting album done");	
 	}
 	
-	public String[] getListOfHosts() {
+	public LinkedList<String> getListOfHosts() {
 		return hostList;
 	}
 }
