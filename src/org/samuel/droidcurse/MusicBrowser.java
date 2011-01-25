@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 
+import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +25,7 @@ public class MusicBrowser extends TabActivity {
 	private ListView listViewArtists;
 	private ListView listViewAlbums;
 	private ListView listViewSongs;
+	private ProgressDialog dialog;
 	
 	/** Called when the activity is first created. */
     @Override
@@ -81,25 +84,48 @@ public class MusicBrowser extends TabActivity {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 			OurLog.i("DroidCurse", "Artists item clicked, arg2: "+arg2+" arg3: "+arg3);
+			NetworkConnection networkConnection = NetworkConnection.getInstance();
 			if (arg2 == 0) {
-				model.changeAllArtists();
+				networkConnection.setAllArtists();
 			} else{
-				model.changeArtist(arg2-1);
+				networkConnection.setArtist(arg2-1);
 			}
 			
 			// update the album list as well
-			model.changeAllAlbums();
+			networkConnection.sendGetListOfAlbums();
+			
+			dialog = ProgressDialog.show(MusicBrowser.this, "", "Loading. Please wait...", true);
+			
+			// wait in the bg for the album monitor to be fully populated
+			new AlbumFetcher().execute();
 		}
 	};
+	
+	class AlbumFetcher extends AsyncTask<Void, Void, Void> {
+		@Override
+		protected Void doInBackground(Void... params) {
+			OurLog.d("DroidCurse", "Doing album async task");
+			// stop showing "please wait" dialog
+			dialog.dismiss();
+			LinkedList<String> albumList = model.getAlbumMonitor().getMessages();
+			model.setAlbumList(albumList);
+			fillAlbumsTab();
+			OurLog.d("DroidCurse", "Doing album async task done");
+			return null;
+		}
+		
+	}
+	
 	
 	OnItemClickListener albumsItemClickListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 			OurLog.i("DroidCurse", "Albums item clicked, arg2: "+arg2+" arg3: "+arg3);
+			NetworkConnection networkConnection = NetworkConnection.getInstance();
 			if (arg2 == 0) {
-				model.changeAllAlbums();
+				networkConnection.setAllAlbums();
 			} else{
-				model.changeAlbum(arg2-1);
+				networkConnection.setAlbum(arg2-1);
 			}
 		}
 	};
@@ -109,7 +135,8 @@ public class MusicBrowser extends TabActivity {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 			OurLog.i("DroidCurse", "Songs item clicked, arg2: "+arg2+" arg3: "+arg3);
-			model.changeSong(arg2);
+			NetworkConnection networkConnection = NetworkConnection.getInstance();
+			networkConnection.playSong(arg2);
 		}
 	};
 

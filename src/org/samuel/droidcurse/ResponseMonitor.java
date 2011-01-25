@@ -5,7 +5,12 @@ import java.util.LinkedList;
 import android.util.Log;
 
 /* This mailbox is used by the network reader thread. One mailbox is used for each kind of response
- * There is one mailbox for the response for the artist command, one for the songs, etc */
+ * There is one mailbox for the response for the artist command, one for the songs, etc 
+ * 
+ * The one thing that makes this mailbox special is that it should be cleared when all
+ * artist/albums/songs are transferred. Then getMessages() should be called which
+ * returns the list and clears the monitor and wakes up all threads waiting for
+ * this monitor to be finished. */
 public class ResponseMonitor {
 	private LinkedList<String> mailBox;
 	private boolean done;

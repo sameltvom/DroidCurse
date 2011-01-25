@@ -4,25 +4,26 @@ import java.util.LinkedList;
 
 public class Model {
 	private static Model model;
+	/* The actual lists of songs, albums and artists transferred to the app */
 	private LinkedList<String> listOfSongs;
 	private LinkedList<String> listOfAlbums;
 	private LinkedList<String> listOfArtists;
+	
+	/* Monitors that temporarily holds the songs, albums and artists,
+	 * they are cleared after each corresponding END command,
+	 * see NetworkReaderThread */
+	private ResponseMonitor artistMonitor;
+	private ResponseMonitor albumMonitor;
+	private ResponseMonitor listMonitor;
 	
 	public Model() {
 		listOfArtists = new LinkedList<String>();
 		listOfAlbums = new LinkedList<String>();
 		listOfSongs = new LinkedList<String>();
 		
-		/*listOfArtists.add("0 - Bob Dylan");
-		listOfArtists.add("1 - Swen Andersson");
-		listOfArtists.add("2 - Gullbritt");
-		
-		listOfSongs.add("0 - Bob Dylan - Heavy rain");
-		listOfSongs.add("1 - Bob Dylan - Idiot wind");
-		listOfSongs.add("2 - Bob Dylan - I want you");
-		listOfSongs.add("3 - Swen Andersson - Rosor");
-		listOfSongs.add("4 - Swen Andersson - Damer");
-		listOfSongs.add("5 - Gullbritt - Gamla guvvar");*/
+		artistMonitor = new ResponseMonitor();
+		albumMonitor = new ResponseMonitor();
+		listMonitor = new ResponseMonitor();
 	}
 	
 	public static Model getInstance() {
@@ -32,8 +33,6 @@ public class Model {
 		return model;
 	}
 
-
-	
 	synchronized public LinkedList<String> getListOfArtists() {
 		return listOfArtists;
 	}
@@ -57,40 +56,16 @@ public class Model {
 	synchronized public LinkedList<String> getListOfSongs() {
 		return listOfSongs;
 	}
-	
 
-	synchronized public void changeArtist(int artistId) {
-		// TODO: Add a message to a mailbox that later is being consumed by another thread
-		NetworkConnection networkConnection = NetworkConnection.getInstance();
-		networkConnection.setArtist(artistId);
-	}
-
-	synchronized public void changeAllArtists() {
-		// TODO: Add a message to a mailbox that later is being consumed by another thread
-		NetworkConnection networkConnection = NetworkConnection.getInstance();
-		networkConnection.setAllArtists();
+	synchronized ResponseMonitor getArtistMonitor() {
+		return artistMonitor;
 	}
 	
-	synchronized public void changeAllAlbums() {
-		// TODO: Add a message to a mailbox that later is being consumed by another thread
-		NetworkConnection networkConnection = NetworkConnection.getInstance();
-		networkConnection.setAllAlbums();
-	}
-
-	synchronized public void changeAlbum(int albumId) {
-		// TODO: Add a message to a mailbox that later is being consumed by another thread
-		NetworkConnection networkConnection = NetworkConnection.getInstance();
-		networkConnection.setAlbum(albumId);
+	synchronized ResponseMonitor getAlbumMonitor() {
+		return albumMonitor;
 	}
 	
-	synchronized public void changeSong(int songId) {
-		// TODO: Add a message to a mailbox that later is being consumed by another thread
-		NetworkConnection networkConnection = NetworkConnection.getInstance();
-		networkConnection.playSong(songId);
+	synchronized ResponseMonitor getListMonitor() {
+		return listMonitor;
 	}
-
-	
-
-	
-
 }

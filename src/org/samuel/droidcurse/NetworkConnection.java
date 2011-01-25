@@ -29,18 +29,14 @@ public class NetworkConnection {
 	private NetworkReaderThread networkReaderThread;	
 	private BufferedWriter writer;
 	
-	private ResponseMonitor artistMonitor;
-	private ResponseMonitor albumMonitor;
-	private ResponseMonitor listMonitor;
+	
 	
 	private Model model;
 	
 	public NetworkConnection() {
 		host = DEFAULT_HOST;
 		port = DEFAULT_PORT;
-		artistMonitor = new ResponseMonitor();
-		albumMonitor = new ResponseMonitor();
-		listMonitor = new ResponseMonitor();
+		
 		model = Model.getInstance();
 		hostList = new LinkedList<String>();
 		hostList.add("192.168.0.100");
@@ -60,37 +56,33 @@ public class NetworkConnection {
 		try {
 			socket = new Socket(host, port);
 			// it should respond quick
-			socket.setSoTimeout(6000);
+			//socket.setSoTimeout(6000);
 			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-			networkReaderThread = new NetworkReaderThread(socket, artistMonitor, albumMonitor, listMonitor);
+			networkReaderThread = new NetworkReaderThread(socket, model);
 			networkReaderThread.start();
 	
 			/* Get list of artists and add them to the model */
-			//String[] artistList = getListOfArtists();
-			//model.setArtistList(artistList);
 			OurLog.d("DroidCurse", "Network: Sending getListofArtists");
 			sendGetListOfArtists();
 			OurLog.d("DroidCurse", "Network: Sending getListofArtists - finished");
 			OurLog.d("DroidCurse", "Network: Waiting for response from artistMonitor...");
-			artistMonitor.waitForResponse();
+			model.getArtistMonitor().waitForResponse();
 			OurLog.d("DroidCurse", "Network: Waiting for response from artistMonitor - finished");
 			
 			OurLog.d("DroidCurse", "Network: Sending getListofAlbums");
 			sendGetListOfAlbums();
 			OurLog.d("DroidCurse", "Network: Sending getListofAlbums - finished");
 			OurLog.d("DroidCurse", "Network: Waiting for response from albumMonitor...");
-			albumMonitor.waitForResponse();
+			model.getAlbumMonitor().waitForResponse();
 			OurLog.d("DroidCurse", "Network: Waiting for response from albumMonitor - finished");
 			
 			
 			/* Get list of song and add them to the model */
-			//String[] songList = getListOfSongs();
-			//model.setSongList(songList);
 			OurLog.d("DroidCurse", "Network: Sending getListofSongs");
 			sendGetListOfSongs();
 			OurLog.d("DroidCurse", "Network: Sending getListofSongs - finished");
 			OurLog.d("DroidCurse", "Network: Waiting for response from listMonitor...");
-			listMonitor.waitForResponse();
+			model.getListMonitor().waitForResponse();
 			OurLog.d("DroidCurse", "Network: Waiting for response from listMonitor - finished");
 			
 			return true;
@@ -154,23 +146,12 @@ public class NetworkConnection {
 
 	void sendGetListOfArtists() {
 		try {
-			// to get a list of all artist we have to be able to go through
-			// all songs in the database. Horribly ugly, indeed
-			//setAllAlbums();
-			//setAllArtists();
 			OurLog.d("DroidCurse", "Sending \"artist\" command");
 			writer.write("artist\r\n");
 			writer.flush();
-			/*String[] artistList = artistMonitor.getMessages();
-			OurLog.d("DroidCurse", "Got artist response:");
-			for (String s : artistList) {
-				OurLog.d("DroidCurse", s);
-			}
-			return artistList;*/
 		} catch (IOException e) {
 			OurLog.e("DroidCurse", "Couldn't get list of artists");
 			e.printStackTrace();
-			//return null;
 		}
 	}
 	
@@ -179,39 +160,23 @@ public class NetworkConnection {
 			OurLog.d("DroidCurse", "Sending \"album\" command");
 			writer.write("album\r\n");
 			writer.flush();
-			/*String[] albumList = albumMonitor.getMessages();
-			OurLog.d("DroidCurse", "Got album response:");
-			for (String s : albumList) {
-				OurLog.d("DroidCurse", s);
-			}
-			return albumList;*/
 		} catch (IOException e) {
 			OurLog.e("DroidCurse", "Couldn't get list of albums");
 			e.printStackTrace();
-			//return null;
 		}
 	}
-	
 	
 	void sendGetListOfSongs() {
 		try {
 			OurLog.d("DroidCurse", "Sending \"list\" command");
 			writer.write("list\r\n");
 			writer.flush();
-			/*String[] songList = listMonitor.getMessages();
-			OurLog.d("DroidCurse", "Got list response:");
-			for (String s : songList) {
-				OurLog.d("DroidCurse", s);
-			}
-			return songList;*/
 		} catch (IOException e) {
 			OurLog.e("DroidCurse", "Couldn't get list of songs");
 			e.printStackTrace();
-			//return null;
 		}
 	}
 
-	// TODO: Do this in a seperate thread
 	public void setArtist(int position) {
 		OurLog.d("DroidCurse", "Setting artist: "+position);
 		try {
@@ -221,7 +186,6 @@ public class NetworkConnection {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		OurLog.d("DroidCurse", "Setting artist done");
 	}
 	
 	public void setAllArtists() {
@@ -233,10 +197,7 @@ public class NetworkConnection {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		OurLog.d("DroidCurse", "Setting all artists done");
 	}
-
-	
 
 	public void setAllAlbums() {
 		OurLog.d("DroidCurse", "Setting all albums");
@@ -247,7 +208,6 @@ public class NetworkConnection {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		OurLog.d("DroidCurse", "Setting all albums done");
 	}
 
 	public void setAlbum(int albumId) {
@@ -259,7 +219,6 @@ public class NetworkConnection {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		OurLog.d("DroidCurse", "Setting album done");	
 	}
 	
 	public LinkedList<String> getListOfHosts() {
