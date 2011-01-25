@@ -48,11 +48,11 @@ public class NetworkReaderThread extends Thread {
 					// adding "all artists" item in the beginning
 			        listOfArtists.addFirst("<All artists>");
 					
-					OurLog.d("DroidCurse", "ReaderThread: Getting messages from artistMonitor - finished");
+					/*OurLog.d("DroidCurse", "ReaderThread: Getting messages from artistMonitor - finished");
 					OurLog.d("DroidCurse", "ReaderThread: listOfArtists:");
 					for (String s : listOfArtists) {
 						OurLog.d("DroidCurse", "ReaderThread: artist: "+s);	
-					}
+					}*/
 					
 					OurLog.d("DroidCurse", "ReaderThread: Setting model artist list");
 					model.setArtistList(listOfArtists);
@@ -70,11 +70,11 @@ public class NetworkReaderThread extends Thread {
 					// adding "all albums" item in the beginning
 			        listOfAlbums.addFirst("<All albums>");
 					
-					OurLog.d("DroidCurse", "ReaderThread: Getting messages from albumMonitor - finished");
+					/*OurLog.d("DroidCurse", "ReaderThread: Getting messages from albumMonitor - finished");
 					OurLog.d("DroidCurse", "ReaderThread: listOfAlbums:");
 					for (String s : listOfAlbums) {
 						OurLog.d("DroidCurse", "ReaderThread: album: "+s);	
-					}
+					}*/
 					
 					OurLog.d("DroidCurse", "ReaderThread: Setting model album list");
 					model.setAlbumList(listOfAlbums);
@@ -92,11 +92,11 @@ public class NetworkReaderThread extends Thread {
 					// it's not a typical mailbox, more like an observable
 					OurLog.d("DroidCurse", "ReaderThread: Getting messages from listMonitor");
 					LinkedList<String> listOfSongs = listMonitor.getMessages();
-					OurLog.d("DroidCurse", "ReaderThread: Getting messages from listMonitor - finished");
+					/*OurLog.d("DroidCurse", "ReaderThread: Getting messages from listMonitor - finished");
 					OurLog.d("DroidCurse", "ReaderThread: listOfSongs:");
 					for (String s : listOfSongs) {
 						OurLog.d("DroidCurse", "ReaderThread: song: "+s);	
-					}
+					}*/
 					OurLog.d("DroidCurse", "ReaderThread: Setting model song list");
 					model.setSongList(listOfSongs);
 					OurLog.d("DroidCurse", "ReaderThread: Setting model song list - finished");

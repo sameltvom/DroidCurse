@@ -4,17 +4,16 @@ package org.samuel.droidcurse;
 import java.util.LinkedList;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListAdapter;
-import android.widget.SlidingDrawer;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -32,8 +31,6 @@ public class DroidCurse extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		networkConnection = NetworkConnection.getInstance();
-
 		((Button)findViewById(R.id.connect_button)).setOnClickListener(connectButtonListener);   
 	}
 
@@ -41,6 +38,8 @@ public class DroidCurse extends Activity {
 	protected void onStart() {
 		super.onStart();
 
+		networkConnection = NetworkConnection.getInstance();
+		
 		// in onStart so it will be run after being restarted after EditHostsActivity
 		hostList = networkConnection.getListOfHosts();
 
@@ -78,16 +77,35 @@ public class DroidCurse extends Activity {
 			}
 			//networkConnection.setHost(NetworkConnection.DEFAULT_HOST);
 			networkConnection.setPort(NetworkConnection.DEFAULT_PORT);
-			boolean connectOk = networkConnection.connect();
+			//ProgressDialog dialog = ProgressDialog.show(DroidCurse.this, "", 
+            //        "Loading. Please wait...", true);
+			
+			// create a task to get the data in the background
+			new SongFetcher().execute();
+		}
+	};
+	
+	/* This will fetch the artist, albums and song in the background */
+	class SongFetcher extends AsyncTask<Void, Integer, Boolean> {
 
-			if (connectOk) {
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			OurLog.d("DroidCurse", "Running songfetcher");
+			return networkConnection.connect();
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			// TODO Auto-generated method stub
+			OurLog.d("DroidCurse", "Result was: "+result);
+			if (result) {
 				Intent i = new Intent(DroidCurse.this, MusicBrowser.class);
 				startActivity(i);
 			} else {
 				Toast.makeText(getApplicationContext(), "Couldn't connect", Toast.LENGTH_SHORT).show();
-			}
+			}	
 		}
-	};
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -105,9 +123,6 @@ public class DroidCurse extends Activity {
 			OurLog.i("DroidCurse", "Menu selected - settings id");
 			Intent i = new Intent(this, EditHostsActivity.class);
 			startActivity(i);
-			/* Give the speed as an argument */
-			//i.putExtra("speed", Morse.UNIT_TIME);
-			//startActivityForResult(i, ACTIVITY_CREATE);
 			return true;
 		}
 

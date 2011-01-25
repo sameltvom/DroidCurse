@@ -59,6 +59,8 @@ public class NetworkConnection {
 	public boolean connect() {
 		try {
 			socket = new Socket(host, port);
+			// it should respond quick
+			socket.setSoTimeout(6000);
 			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			networkReaderThread = new NetworkReaderThread(socket, artistMonitor, albumMonitor, listMonitor);
 			networkReaderThread.start();
@@ -154,10 +156,8 @@ public class NetworkConnection {
 		try {
 			// to get a list of all artist we have to be able to go through
 			// all songs in the database. Horribly ugly, indeed
-			setAllAlbums();
-			setAllArtists();
-			// horribly ugly but poor rhytmcurse has to be updated
-			Thread.sleep(500);
+			//setAllAlbums();
+			//setAllArtists();
 			OurLog.d("DroidCurse", "Sending \"artist\" command");
 			writer.write("artist\r\n");
 			writer.flush();
@@ -167,9 +167,6 @@ public class NetworkConnection {
 				OurLog.d("DroidCurse", s);
 			}
 			return artistList;*/
-		} catch (InterruptedException e) {
-			OurLog.e("DroidCurse", "Couldn't sleep");
-			e.printStackTrace();
 		} catch (IOException e) {
 			OurLog.e("DroidCurse", "Couldn't get list of artists");
 			e.printStackTrace();

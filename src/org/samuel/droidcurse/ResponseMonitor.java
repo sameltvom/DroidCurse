@@ -42,5 +42,6 @@ public class ResponseMonitor {
 			}
 		}
 		OurLog.d("DroidCurse", "Monitor: Waiting for monitor ready - finished");
+		done = false;
 	}
 }
