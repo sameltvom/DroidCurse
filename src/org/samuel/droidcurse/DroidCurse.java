@@ -22,6 +22,7 @@ public class DroidCurse extends Activity {
 	private NetworkConnection networkConnection;
 	LinkedList<String> hostList;
 	private String selectedHost;
+	private ProgressDialog dialog;
 
 	private static final int SETTINGS_ID = Menu.FIRST;
 
@@ -77,8 +78,8 @@ public class DroidCurse extends Activity {
 			}
 			//networkConnection.setHost(NetworkConnection.DEFAULT_HOST);
 			networkConnection.setPort(NetworkConnection.DEFAULT_PORT);
-			//ProgressDialog dialog = ProgressDialog.show(DroidCurse.this, "", 
-            //        "Loading. Please wait...", true);
+			
+			dialog = ProgressDialog.show(DroidCurse.this, "", "Loading. Please wait...", true);
 			
 			// create a task to get the data in the background
 			new SongFetcher().execute();
@@ -96,8 +97,9 @@ public class DroidCurse extends Activity {
 
 		@Override
 		protected void onPostExecute(Boolean result) {
-			// TODO Auto-generated method stub
 			OurLog.d("DroidCurse", "Result was: "+result);
+			// remove the "please wait" dialog
+			dialog.dismiss();
 			if (result) {
 				Intent i = new Intent(DroidCurse.this, MusicBrowser.class);
 				startActivity(i);
