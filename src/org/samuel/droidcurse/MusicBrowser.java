@@ -137,9 +137,36 @@ public class MusicBrowser extends TabActivity {
 			} else{
 				networkConnection.setAlbum(arg2-1);
 			}
+			
+			dialog = ProgressDialog.show(MusicBrowser.this, "", "Loading. Please wait...", true);
+			
+			// wait in the bg for the album monitor to be fully populated
+			new SongFetcher().execute();
 		}
 	};
 
+	class SongFetcher extends AsyncTask<Void, Void, Void> {
+		@Override
+		protected Void doInBackground(Void... params) {
+			OurLog.d("DroidCurse", "Doing song async task");
+			
+			// send get list of songs command and wait for the response
+			NetworkConnection networkConnection = NetworkConnection.getInstance();
+			networkConnection.sendGetListOfSongs();
+			LinkedList<String> songList = model.getListMonitor().getMessages();
+			model.setSongList(songList);
+			
+			// stop showing "please wait" dialog
+			dialog.dismiss();
+			
+			// show the result
+			fillSongsTab();
+			
+			OurLog.d("DroidCurse", "Doing song async task done");
+			return null;
+		}
+		
+	}
 
 	OnItemClickListener songsItemClickListener = new OnItemClickListener() {
 		@Override

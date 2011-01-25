@@ -82,12 +82,12 @@ public class DroidCurse extends Activity {
 			dialog = ProgressDialog.show(DroidCurse.this, "", "Loading. Please wait...", true);
 			
 			// create a task to get the data in the background
-			new SongFetcher().execute();
+			new ConnectTask().execute();
 		}
 	};
 	
 	/* This will fetch the artist, albums and song in the background */
-	class SongFetcher extends AsyncTask<Void, Integer, Boolean> {
+	class ConnectTask extends AsyncTask<Void, Integer, Boolean> {
 
 		@Override
 		protected Boolean doInBackground(Void... params) {
