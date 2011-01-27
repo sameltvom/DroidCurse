@@ -86,6 +86,12 @@ public class DroidCurse extends Activity {
 		}
 	};
 	
+	// This should be a Handler instead and NetworkConnection should have
+	// private classes that are observers, observing the models
+	// different monitors which should be remade as observables
+	// this way we get rid of tasks like this one that only waits in a 
+	// monitor anyways
+	
 	/* This will fetch the artist, albums and song in the background */
 	class ConnectTask extends AsyncTask<Void, Integer, Boolean> {
 
