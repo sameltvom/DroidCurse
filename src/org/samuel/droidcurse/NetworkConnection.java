@@ -6,7 +6,11 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
+import java.util.Observable;
+import java.util.Observer;
 
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 public class NetworkConnection {
@@ -14,6 +18,9 @@ public class NetworkConnection {
 	
 	//private String[] hostList = new String[]{"192.168.0.100", "192.168.0.123"};
 	private LinkedList<String> hostList; 
+	
+	// used to communicate with droid curse to say what results happened
+	private Handler connectionHandler;
 	
 	// Host: trudy
 	//public static final String DEFAULT_HOST = "192.168.0.123";
@@ -29,19 +36,13 @@ public class NetworkConnection {
 	private NetworkReaderThread networkReaderThread;	
 	private BufferedWriter writer;
 	
-	
-	
-	private Model model;
-	
 	public NetworkConnection() {
 		host = DEFAULT_HOST;
 		port = DEFAULT_PORT;
 		
-		model = Model.getInstance();
 		hostList = new LinkedList<String>();
 		hostList.add("192.168.0.100");
-		hostList.add("192.168.0.123");
-		
+		hostList.add("192.168.0.123");	
 	}
 
 	public void setHost(String host) {
@@ -52,49 +53,35 @@ public class NetworkConnection {
 		this.port = port;
 	}
 
-	public boolean connect() {
+	public void connect(Handler connectionHandler) {
+		this.connectionHandler = connectionHandler;
+		
+		Message message = Message.obtain();
+		
 		try {
 			socket = new Socket(host, port);
 			// it should respond quick
 			//socket.setSoTimeout(6000);
 			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-			networkReaderThread = new NetworkReaderThread(socket, model);
+			networkReaderThread = new NetworkReaderThread(socket);
 			networkReaderThread.start();
-	
-			/* Get list of artists and add them to the model */
-			OurLog.d("DroidCurse", "Network: Sending getListofArtists");
-			sendGetListOfArtists();
-			OurLog.d("DroidCurse", "Network: Sending getListofArtists - finished");
-			OurLog.d("DroidCurse", "Network: Waiting for response from artistMonitor...");
-			model.getArtistMonitor().waitForResponse();
-			OurLog.d("DroidCurse", "Network: Waiting for response from artistMonitor - finished");
 			
-			OurLog.d("DroidCurse", "Network: Sending getListofAlbums");
-			sendGetListOfAlbums();
-			OurLog.d("DroidCurse", "Network: Sending getListofAlbums - finished");
-			OurLog.d("DroidCurse", "Network: Waiting for response from albumMonitor...");
-			model.getAlbumMonitor().waitForResponse();
-			OurLog.d("DroidCurse", "Network: Waiting for response from albumMonitor - finished");
-			
-			
-			/* Get list of song and add them to the model */
-			OurLog.d("DroidCurse", "Network: Sending getListofSongs");
-			sendGetListOfSongs();
-			OurLog.d("DroidCurse", "Network: Sending getListofSongs - finished");
-			OurLog.d("DroidCurse", "Network: Waiting for response from listMonitor...");
-			model.getListMonitor().waitForResponse();
-			OurLog.d("DroidCurse", "Network: Waiting for response from listMonitor - finished");
-			
-			return true;
+			message.arg1 = 1;
 		} catch (UnknownHostException e) {
 			OurLog.e("DroidCurse", "Unknown host: "+host);
-			return false;
+			message.arg1 = 0;
 		} catch (IOException e) {
 			OurLog.e("DroidCurse", "Couldn't create socket to: "+host+":"+port);
-			return false;
+			message.arg1 = 0;
 		}
+		
+		// let droid curse know how it went
+		connectionHandler.sendMessage(message);
 	}
-
+	
+	
+	
+	
 	public void disconnect() {
 		try {
 			quit();

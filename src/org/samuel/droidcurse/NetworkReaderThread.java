@@ -17,9 +17,9 @@ public class NetworkReaderThread extends Thread {
 	private NetworkConnection networkConnection;
 	private Model model;
 	
-	public NetworkReaderThread(Socket socket, Model model) {
+	public NetworkReaderThread(Socket socket) {
 		this.socket = socket;
-		this.model = model;
+		this.model = Model.getInstance();
 		artistMonitor = model.getArtistMonitor();
 		albumMonitor = model.getAlbumMonitor();
 		listMonitor = model.getListMonitor();

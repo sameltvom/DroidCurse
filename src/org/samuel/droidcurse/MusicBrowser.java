@@ -2,6 +2,8 @@ package org.samuel.droidcurse;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Observable;
+import java.util.Observer;
 
 
 import android.app.ProgressDialog;
@@ -10,6 +12,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class MusicBrowser extends TabActivity {
@@ -69,8 +73,75 @@ public class MusicBrowser extends TabActivity {
         mTabHost.setCurrentTab(0);
     
         // first fill tab so it's not empty
-        fillArtistsTab();   
+        fillArtistsTab();
+        
+        NetworkConnection networkConnection = NetworkConnection.getInstance();
+		
+    	/* Get list of artists and add them to the model */
+		OurLog.d("DroidCurse", "Network: Sending getListofArtists");
+		networkConnection.sendGetListOfArtists();
+		OurLog.d("DroidCurse", "Network: Sending getListofArtists - finished");
+		
+		model.getArtistMonitor().addObserver(artistObserver);
+		model.getAlbumMonitor().addObserver(albumObserver);
+		model.getListMonitor().addObserver(listObserver);
+		
     }
+    
+ // will be notified when artist monitor is done
+	private Observer artistObserver = new Observer() {
+		@Override
+		public void update(Observable observable, Object data) {
+			OurLog.d("DroidCurse", "Artist list is done!");
+			runOnUiThread(new Runnable() {
+			    public void run() {
+			    	fillArtistsTab();
+			    	//dialog.dismiss();
+			    }
+			});
+			
+			OurLog.d("DroidCurse", "Network: Sending getListofAlbums");
+			NetworkConnection networkConnection = NetworkConnection.getInstance();
+			networkConnection.sendGetListOfAlbums();
+			OurLog.d("DroidCurse", "Network: Sending getListofAlbums - finished");
+			OurLog.d("DroidCurse", "Network: Waiting for response from albumMonitor...");
+			
+			OurLog.d("DroidCurse", "Network: Waiting for response from albumMonitor - finished");
+		}
+	};
+	
+	// will be notified when album monitor is done
+	private Observer albumObserver = new Observer() {
+		@Override
+		public void update(Observable observable, Object data) {
+			OurLog.d("DroidCurse", "Album list is done!");
+			runOnUiThread(new Runnable() {
+			    public void run() {
+			    	fillAlbumsTab();
+			    	//dialog.dismiss();
+			    }
+			});
+			
+			OurLog.d("DroidCurse", "Network: Sending getListofSongs");
+			NetworkConnection networkConnection = NetworkConnection.getInstance();
+			networkConnection.sendGetListOfSongs();
+		}
+	};
+	
+
+	// will be notified when list monitor is done
+	private Observer listObserver = new Observer() {
+		@Override
+		public void update(Observable observable, Object data) {
+			OurLog.d("DroidCurse", "Song list is done!");
+			runOnUiThread(new Runnable() {
+			    public void run() {
+			    	fillSongsTab();
+					//dialog.dismiss();
+			    }
+			});
+		}
+	};
     
     @Override
 	protected void onDestroy() {

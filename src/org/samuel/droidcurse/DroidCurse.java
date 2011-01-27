@@ -8,6 +8,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,7 +51,6 @@ public class DroidCurse extends Activity {
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
 		spinner.setOnItemSelectedListener(spinnerListener);
-
 	}
 
 	OnItemSelectedListener spinnerListener = new OnItemSelectedListener() {
@@ -79,42 +80,40 @@ public class DroidCurse extends Activity {
 			//networkConnection.setHost(NetworkConnection.DEFAULT_HOST);
 			networkConnection.setPort(NetworkConnection.DEFAULT_PORT);
 			
-			dialog = ProgressDialog.show(DroidCurse.this, "", "Loading. Please wait...", true);
+			dialog = ProgressDialog.show(DroidCurse.this, "", ". Please wait...", true);
 			
-			// create a task to get the data in the background
-			new ConnectTask().execute();
+			// when this is done, connectionHandler will be called to know the result
+			networkConnection.connect(connectionHandler);
 		}
 	};
 	
-	// This should be a Handler instead and NetworkConnection should have
-	// private classes that are observers, observing the models
-	// different monitors which should be remade as observables
-	// this way we get rid of tasks like this one that only waits in a 
-	// monitor anyways
-	
-	/* This will fetch the artist, albums and song in the background */
-	class ConnectTask extends AsyncTask<Void, Integer, Boolean> {
-
+	private Handler connectionHandler = new Handler() {
 		@Override
-		protected Boolean doInBackground(Void... params) {
-			OurLog.d("DroidCurse", "Running songfetcher");
-			return networkConnection.connect();
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result) {
-			OurLog.d("DroidCurse", "Result was: "+result);
-			// remove the "please wait" dialog
-			dialog.dismiss();
-			if (result) {
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			OurLog.d("DroidCurse", "Got message to connection handler");
+			
+			// when manipulating UI, do it in the UI thread
+			runOnUiThread(new Runnable() {
+			    public void run() {
+			    	dialog.dismiss();
+			    }
+			});
+			
+			// if 1 than everything worked
+			if (msg.arg1 == 1) {
 				Intent i = new Intent(DroidCurse.this, MusicBrowser.class);
 				startActivity(i);
 			} else {
-				Toast.makeText(getApplicationContext(), "Couldn't connect", Toast.LENGTH_SHORT).show();
+				runOnUiThread(new Runnable() {
+				    public void run() {
+				    	Toast.makeText(getApplicationContext(), "Couldn't connect", Toast.LENGTH_SHORT).show();
+					}
+				});
 			}	
 		}
-	}
-
+	};
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);

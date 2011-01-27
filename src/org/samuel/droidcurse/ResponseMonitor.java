@@ -1,6 +1,7 @@
 package org.samuel.droidcurse;
 
 import java.util.LinkedList;
+import java.util.Observable;
 
 import android.util.Log;
 
@@ -11,7 +12,7 @@ import android.util.Log;
  * artist/albums/songs are transferred. Then getMessages() should be called which
  * returns the list and clears the monitor and wakes up all threads waiting for
  * this monitor to be finished. */
-public class ResponseMonitor {
+public class ResponseMonitor extends Observable {
 	private LinkedList<String> mailBox;
 	private boolean done;
 	
@@ -31,11 +32,12 @@ public class ResponseMonitor {
 		LinkedList<String> tmp = new LinkedList<String>(mailBox);
 		mailBox.clear();
 		done = true;
-		notifyAll();
+		setChanged();
+		notifyObservers();
 		return tmp;
 	}
 
-	public synchronized void waitForResponse() {
+	/*public synchronized void waitForResponse() {
 		OurLog.d("DroidCurse", "Monitor: Waiting for monitor ready");
 		while (!done) {
 			try {
@@ -48,5 +50,5 @@ public class ResponseMonitor {
 		}
 		OurLog.d("DroidCurse", "Monitor: Waiting for monitor ready - finished");
 		done = false;
-	}
+	}*/
 }
