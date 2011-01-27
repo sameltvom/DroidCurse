@@ -7,10 +7,13 @@ import java.util.Observer;
 
 import android.app.ProgressDialog;
 import android.app.TabActivity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
@@ -48,6 +51,7 @@ public class MusicBrowser extends TabActivity {
         
         LinearLayout artistsLayout = (LinearLayout)findViewById(R.id.artists_layout); 	
 		listViewArtists =  new ListView(this);
+		
 		listViewArtists.setOnItemClickListener(artistsItemClickListener);
         artistsLayout.addView(listViewArtists);
         
@@ -153,6 +157,8 @@ public class MusicBrowser extends TabActivity {
 				networkConnection.setArtist(arg2-1);
 			}
 			
+			
+			
 			dialog = ProgressDialog.show(MusicBrowser.this, "", "Loading. Please wait...", true);
 		}
 	};
@@ -197,13 +203,13 @@ public class MusicBrowser extends TabActivity {
 		}
 	};
 	
-	private void fillSongsTab() {
-		LinkedList<String> listItems;
-		OurLog.d("DroidCurse", "MusicBrowser: model.getListOfSongs()");
-        listItems = model.getListOfSongs();
-		OurLog.d("DroidCurse", "MusicBrowser: model.getListOfSongs() - finished");
-		listViewSongs.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
-	}
+	private void fillArtistsTab() {
+		LinkedList<String> listItems;	
+		OurLog.d("DroidCurse", "MusicBrowser: model.getListOfArtists()");
+        listItems = model.getListOfArtists();
+        OurLog.d("DroidCurse", "MusicBrowser: model.getListOfArtists() - finished");
+        listViewArtists.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
+    }
 	
 	private void fillAlbumsTab() {
 		LinkedList<String> listItems;
@@ -213,12 +219,14 @@ public class MusicBrowser extends TabActivity {
 		listViewAlbums.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
 	}
 	
-	private void fillArtistsTab() {
-		LinkedList<String> listItems;	
-		OurLog.d("DroidCurse", "MusicBrowser: model.getListOfArtists()");
-        listItems = model.getListOfArtists();
-        OurLog.d("DroidCurse", "MusicBrowser: model.getListOfArtists() - finished");
-        listViewArtists.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
+	private void fillSongsTab() {
+		LinkedList<String> listItems;
+		OurLog.d("DroidCurse", "MusicBrowser: model.getListOfSongs()");
+        listItems = model.getListOfSongs();
+		OurLog.d("DroidCurse", "MusicBrowser: model.getListOfSongs() - finished");
+		listViewSongs.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems));
 	}
+	
+	
     
 }
