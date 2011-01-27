@@ -7,8 +7,6 @@ import java.net.Socket;
 import java.util.LinkedList;
 
 
-import android.util.Log;
-
 public class NetworkReaderThread extends Thread {
 	private Socket socket;
 	private ResponseMonitor artistMonitor;
@@ -93,7 +91,7 @@ public class NetworkReaderThread extends Thread {
 					networkConnection.sendGetListOfSongs();
 				} else if (line.startsWith("ALL_ARTISTS ALL_ARTISTS_OK")) {
 					OurLog.d("DroidCurse", "ReaderThread: Artists changed, fetching album list...");
-					// this will trigger INF_ALBUM which will request song list, sno
+					// this will trigger INF_ALBUM which will request song list, so
 					// there is no need to do that here
 					networkConnection.sendGetListOfAlbums();
 				}
@@ -102,6 +100,5 @@ public class NetworkReaderThread extends Thread {
 			OurLog.e("DroidCurse", "ReaderThread: Couldn't readline, probably disconnected");
 		}
 		OurLog.i("DroidCurse", "Exiting reader thread");
-		
 	}
 }

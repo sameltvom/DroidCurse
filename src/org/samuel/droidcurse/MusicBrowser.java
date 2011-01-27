@@ -1,6 +1,5 @@
 package org.samuel.droidcurse;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
@@ -8,19 +7,13 @@ import java.util.Observer;
 
 import android.app.ProgressDialog;
 import android.app.TabActivity;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class MusicBrowser extends TabActivity {
@@ -73,19 +66,18 @@ public class MusicBrowser extends TabActivity {
         mTabHost.setCurrentTab(0);
     
         // first fill tab so it's not empty
-        fillArtistsTab();
+        //fillArtistsTab();
         
         NetworkConnection networkConnection = NetworkConnection.getInstance();
-		
-    	/* Get list of artists and add them to the model */
-		OurLog.d("DroidCurse", "Network: Sending getListofArtists");
-		networkConnection.sendGetListOfArtists();
-		OurLog.d("DroidCurse", "Network: Sending getListofArtists - finished");
 		
 		model.getArtistMonitor().addObserver(artistObserver);
 		model.getAlbumMonitor().addObserver(albumObserver);
 		model.getListMonitor().addObserver(listObserver);
 		
+		dialog = ProgressDialog.show(MusicBrowser.this, "", "Loading. Please wait...", true);
+		
+		OurLog.d("DroidCurse", "Network: Sending getListofArtists");
+		networkConnection.sendGetListOfArtists();
     }
     
  // will be notified when artist monitor is done
@@ -96,7 +88,7 @@ public class MusicBrowser extends TabActivity {
 			runOnUiThread(new Runnable() {
 			    public void run() {
 			    	fillArtistsTab();
-			    	//dialog.dismiss();
+			    	dialog.dismiss();
 			    }
 			});
 			
@@ -118,7 +110,7 @@ public class MusicBrowser extends TabActivity {
 			runOnUiThread(new Runnable() {
 			    public void run() {
 			    	fillAlbumsTab();
-			    	//dialog.dismiss();
+			    	dialog.dismiss();
 			    }
 			});
 			
@@ -127,7 +119,6 @@ public class MusicBrowser extends TabActivity {
 			networkConnection.sendGetListOfSongs();
 		}
 	};
-	
 
 	// will be notified when list monitor is done
 	private Observer listObserver = new Observer() {
@@ -137,7 +128,7 @@ public class MusicBrowser extends TabActivity {
 			runOnUiThread(new Runnable() {
 			    public void run() {
 			    	fillSongsTab();
-					//dialog.dismiss();
+					dialog.dismiss();
 			    }
 			});
 		}
@@ -163,40 +154,8 @@ public class MusicBrowser extends TabActivity {
 			}
 			
 			dialog = ProgressDialog.show(MusicBrowser.this, "", "Loading. Please wait...", true);
-			
-			// wait in the bg for the album monitor to be fully populated
-			new AlbumFetcher().execute();
 		}
 	};
-	
-	class AlbumFetcher extends AsyncTask<Void, Void, Void> {
-		@Override
-		protected Void doInBackground(Void... params) {
-			OurLog.d("DroidCurse", "Doing album async task");
-			// send get list of albums and wait for the response
-			NetworkConnection networkConnection = NetworkConnection.getInstance();
-			networkConnection.sendGetListOfAlbums();
-			LinkedList<String> albumList = model.getAlbumMonitor().getMessages();
-			model.setAlbumList(albumList);
-			
-			// send get list of songs command and wait for the response
-			networkConnection.sendGetListOfSongs();
-			LinkedList<String> songList = model.getListMonitor().getMessages();
-			model.setSongList(songList);
-			
-			// stop showing "please wait" dialog
-			dialog.dismiss();
-			
-			// show the result
-			fillAlbumsTab();
-			fillSongsTab();
-			
-			OurLog.d("DroidCurse", "Doing album async task done");
-			return null;
-		}
-		
-	}
-	
 	
 	OnItemClickListener albumsItemClickListener = new OnItemClickListener() {
 		@Override
@@ -209,35 +168,9 @@ public class MusicBrowser extends TabActivity {
 				networkConnection.setAlbum(arg2-1);
 			}
 			
-			dialog = ProgressDialog.show(MusicBrowser.this, "", "Loading. Please wait...", true);
-			
-			// wait in the bg for the album monitor to be fully populated
-			new SongFetcher().execute();
+			dialog = ProgressDialog.show(MusicBrowser.this, "", "Loading. Please wait...", true);			
 		}
 	};
-
-	class SongFetcher extends AsyncTask<Void, Void, Void> {
-		@Override
-		protected Void doInBackground(Void... params) {
-			OurLog.d("DroidCurse", "Doing song async task");
-			
-			// send get list of songs command and wait for the response
-			NetworkConnection networkConnection = NetworkConnection.getInstance();
-			networkConnection.sendGetListOfSongs();
-			LinkedList<String> songList = model.getListMonitor().getMessages();
-			model.setSongList(songList);
-			
-			// stop showing "please wait" dialog
-			dialog.dismiss();
-			
-			// show the result
-			fillSongsTab();
-			
-			OurLog.d("DroidCurse", "Doing song async task done");
-			return null;
-		}
-		
-	}
 
 	OnItemClickListener songsItemClickListener = new OnItemClickListener() {
 		@Override

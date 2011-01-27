@@ -6,24 +6,14 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
-import java.util.Observable;
-import java.util.Observer;
-
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 public class NetworkConnection {
 	private static NetworkConnection singletonInstance;
 	
 	//private String[] hostList = new String[]{"192.168.0.100", "192.168.0.123"};
 	private LinkedList<String> hostList; 
-	
-	// used to communicate with droid curse to say what results happened
-	private Handler connectionHandler;
-	
-	// Host: trudy
-	//public static final String DEFAULT_HOST = "192.168.0.123";
 	
 	// Host: dave
 	public static final String DEFAULT_HOST = "192.168.0.100";
@@ -53,9 +43,7 @@ public class NetworkConnection {
 		this.port = port;
 	}
 
-	public void connect(Handler connectionHandler) {
-		this.connectionHandler = connectionHandler;
-		
+	public void connect(Handler connectionHandler) {	
 		Message message = Message.obtain();
 		
 		try {
@@ -78,9 +66,6 @@ public class NetworkConnection {
 		// let droid curse know how it went
 		connectionHandler.sendMessage(message);
 	}
-	
-	
-	
 	
 	public void disconnect() {
 		try {
@@ -114,11 +99,9 @@ public class NetworkConnection {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		OurLog.d("DroidCurse", "Quiting - finished");
-		
+		OurLog.d("DroidCurse", "Quiting - finished");	
 	}
 	
-	// TODO: Do this in a seperate thread
 	public void playSong(int position) {
 		OurLog.d("DroidCurse", "Playing song: "+position);
 		try {
